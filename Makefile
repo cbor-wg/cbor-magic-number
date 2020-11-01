@@ -1,4 +1,4 @@
-DRAFT:=masa-operational-considerations
+DRAFT:=draft
 VERSION:=$(shell ./getver ${DRAFT}.mkd )
 EXAMPLES=
 
@@ -6,12 +6,13 @@ ${DRAFT}-${VERSION}.txt: ${DRAFT}.txt
 	cp ${DRAFT}.txt ${DRAFT}-${VERSION}.txt
 	: git add ${DRAFT}-${VERSION}.txt ${DRAFT}.txt
 
-%.xml: %.mkd 
+%.xml: %.mkd
 	kramdown-rfc2629 ${DRAFT}.mkd | ./insert-figures >${DRAFT}.xml
-	: git add ${DRAFT}.xml
+	unset DISPLAY; XML_LIBRARY=$(XML_LIBRARY):./src xml2rfc --v2v3 ${DRAFT}.xml
+	mv ${DRAFT}.v2v3.xml ${DRAFT}.xml
 
 %.txt: %.xml
-	unset DISPLAY; XML_LIBRARY=$(XML_LIBRARY):./src xml2rfc $? $@
+	unset DISPLAY; XML_LIBRARY=$(XML_LIBRARY):./src xml2rfc --text -o $@ $?
 
 %.html: %.xml
 	unset DISPLAY; XML_LIBRARY=$(XML_LIBRARY):./src xml2rfc --html -o $@ $?
@@ -23,6 +24,6 @@ version:
 	echo Version: ${VERSION}
 
 clean:
-	-rm -f ${DRAFT}.xml 
+	-rm -f ${DRAFT}.xml
 
 .PRECIOUS: ${DRAFT}.xml
