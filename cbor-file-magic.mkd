@@ -1,0 +1,179 @@
+---
+title: On storing CBOR encoded items on stable storage
+abbrev: cbor-file-magic
+docname: draft-richardson-cbor-file-magic-00
+
+stand_alone: true
+
+ipr: trust200902
+area: Internet
+wg: anima Working Group
+kw: Internet-Draft
+cat: std
+
+pi:    # can use array (if all yes) or hash here
+  toc: yes
+  sortrefs:   # defaults to yes
+  symrefs: yes
+
+author:
+
+
+- ins: M. Richardson
+  name: Michael Richardson
+  org: Sandelman Software Works
+  email: mcr+ietf@sandelman.ca
+
+normative:
+  BCP14: RFC8174
+  RFC8949:
+
+informative:
+  file:
+    title: "file (command)"
+    target: "https://en.wikipedia.org/wiki/File_%28command%29"
+    author:
+      org: Wikipedia
+    date: 2021-01-20
+
+  ilbm:
+    title: "Interleaved BitMap"
+    target: "https://en.wikipedia.org/wiki/ILBM"
+    author:
+      org: Wikipedia
+    date: 2021-01-20
+
+--- abstract
+
+This document proposes an on-disk format for CBOR objects that
+is friendly to common on-disk recognition systems like the Unix file(1) command.
+
+--- middle
+
+# Introduction
+
+Since very early in computing, operating systems have sought ways to mark which files could be proposed by which programs.
+
+For instance, the Unix file(1) command, which has existed since 1973 ({{file}}), has been able to identify many file formats for decades.
+Many systems (Linux, MacOS, Windows) will select the correct application based upon the file contents, if the system can determine it by other means.
+(MacOS maintains a resource fork that includes MIME information)
+
+While having a MIME type associated with the file is a better solution in general, when files become disconnected from their type information, such as when attempting to do forensics on a damaged system,
+then being able to identify a file type can become very important.
+
+It is noted that in the MIME type registration, that a magic number is asked for, if available.
+
+A challenge for this program is often that it can be confused by the encoding vs the content.
+For instance, an Android "apk" used to transfer and store an application may be identified as a ZIP file.
+
+As CBOR becomes a more and more common encoding for artifacts, identifying them as CBOR is probably not useful.
+This document provides a way to encode a magic number into the beginning of a CBOR format file.
+Two options are presented, with the intention of standardizing only one.
+
+These proposals are invasive to how CBOR protocols are written to disk, but in both cases, the
+proposed envelope does not require that the tag be transfered on the wire.
+
+Some protocols may benefit from having such a magic on the wire if they presently using a different (legacy) encoding scheme, and need to determine before invoking a CBOR decoder if the sender is
+using the legacy scheme, or the new CBOR scheme.
+
+# Requirements for a Magic Number
+
+A magic number is ideally a unique fingerprint, present in the first 4 or 8 bytes of the file,
+which does not change when the content change, and does not depend upon the length of the file.
+
+Less ideal solutions have a pattern that needs to be matched, but in which some bytes need to be ignored.
+
+# Proposal One
+
+This proposal uses a CBOR Array of size two.
+The first byte is therefore 0b100_00010 (0x82).
+
+Array element number one is a CBOR integer in the range 0x80000000 to 0xffffffff.
+This number is the magic number described below in {{magictable}}
+
+For a magic number 0x87654321, this results in a total of a six byte sequence:
+
+~~~~
+  0b100_00010 0b000_11010 0x87 0x65 0x43 0x21
+~~~~
+
+Array element number two is whatever the original CBOR content is supposed to be.
+Due the array construct with known size, there is no further syntax required.
+
+# Proposal Two
+
+This proposal uses a CBOR Sequence {{!RFC8742}}.
+
+Array element number one is a CBOR integer in the range 0x80000000 to 0xffffffff.
+This number is the magic number described below in {{magictable}}
+
+For a magic number 0x87653412, this results in a total of a five byte sequence:
+
+~~~~
+  0b000_11010 0x87 0x65 0x34 0x12
+~~~~
+
+This is followed by one or more CBOR data items of whatever type was intended.
+
+# Variations
+
+There are four variations.
+
+## Use a CBOR Tag on the entire file
+
+A two byte CBOR Tag could be used in proposal one to the array.
+This would add two bytes, bring the total flag bytes up to eight.
+The two byte sequence would have to start with 0b110_11000,
+followed by a one byte tag value, followed by the array as described above.
+
+## Use a CBOR Tag on the CBOR Integer
+
+A two or three byte CBOR Tag could be used in proposal two, applied to the CBOR Integer.
+
+Or, a two byte CBOR Tag could be used in proposal one, applied to the CBOR Integer,
+and not applied to the array.
+This would make the first four bytes of a CBOR encoded item recognizeably CBOR,
+with the next four bytes being the specific CBOR content.
+
+## Use a CBOR Tag on a constant CBOR Integer
+
+Instead of creating a new namespace (and IANA registry) for magic numbers, the CBOR Tag registry (which is very large) could be used.
+Rather than using the integer as the magic number, the Tag would be the magic number.
+Since the tag has to tag something, it could be some constant value could be tagged: a CBOR Null,
+or perhaps the CBOR string "cbor".
+
+# The Magic Number Registry {#magictable}
+
+In order to maintain uniqueness an IANA registry is required for the Magic Numbers.
+
+These Magic numbers would be 4-byte numbers in a First Come/First Served registry.
+Applicants would be encouraged to make a selection, and it would be encouraged to make the magic number a bit descriptive in ASCII.
+As a historic example, the IFF ILBM {{ilbm}} had a formatID whose bytes were: "ILBM", or 0x49 0x4C 0x42 0x4D.
+
+In the case where the CBOR Tag registry is used, then there are two options:
+
+1. allow requesters to select their own four (32-bit) or eight (64-bit) tags, from the First Come First Served Registry, using the existing instructions.
+
+2. amend the IANA instructions for {{RFC8949}} and carve out a 30-bit chunk of the four byte registry,
+or a 32-bit chunk of the eight byte registry.
+
+While in many cases CBOR encodings strive to be as compact as possible, for the purposes of a magic number registry for objects stored on disk, the use of between eight and twelve bytes is acceptable.
+
+
+# Security Considerations
+
+ZZZ
+
+# IANA Considerations
+
+TBD
+
+# Acknowledgements
+
+Hello.
+
+# Changelog
+
+
+--- back
+

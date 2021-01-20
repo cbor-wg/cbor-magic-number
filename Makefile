@@ -1,4 +1,4 @@
-DRAFT:=draft
+DRAFT:=cbor-file-magic
 VERSION:=$(shell ./getver ${DRAFT}.mkd )
 EXAMPLES=
 
