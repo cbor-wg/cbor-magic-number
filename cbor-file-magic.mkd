@@ -1,7 +1,7 @@
 ---
 title: On storing CBOR encoded items on stable storage
 abbrev: cbor-file-magic
-docname: draft-richardson-cbor-file-magic-00
+docname: draft-richardson-cbor-file-magic-01
 
 stand_alone: true
 
@@ -24,9 +24,16 @@ author:
   org: Sandelman Software Works
   email: mcr+ietf@sandelman.ca
 
+contributor:
+  - name: Carsten Borman
+    email: cabo@tzi.org
+  - name: Josef 'Jeff' Sipek 
+    email: jeffpc@josefsipek.net
+
 normative:
   BCP14: RFC8174
   RFC8949:
+  RFC8742:
 
 informative:
   file:
@@ -87,99 +94,42 @@ which does not change when the content change, and does not depend upon the leng
 Less ideal solutions have a pattern that needs to be matched, but in which some bytes need to be ignored.
 While the Unix file(1) command can be told to ignore bytes, this can lead to ambiguities.
 
-# Proposal One
+# Protocol Proposal
 
-This proposal uses a CBOR Array of size two.
-The first byte is therefore 0b100_00010 (0x82).
+This proposal makes use of CBOR Sequences as described in {{RFC8742}}.
 
-Array element number one is a CBOR integer in the range 0x80000000 to 0xffffffff.
-This number is the magic number described below in {{magictable}}
+This proposal consists of two tags and a constant string for a total of 12 bytes.
 
-For a magic number 0x87654321, this results in a total of a six byte sequence:
+1. The file shall start with the Self-described CBOR tag, 55799, as described in {{RFC8949}} section 3.4.6. 
+2. The file shall continue with a CBOR tag, from the First Come First Served space, which uniquely identifies the CBOR Protocol.  The use of a four-byte tag is encouraged.
+3. The three byte CBOR array containing 0x42\_4F\_52. When encoded it shows up as "CBOR"
 
-~~~~
-  0b100_00010 0b000_11010 0x87 0x65 0x43 0x21
-~~~~
+The first part identifies the file as being CBOR, and does so with all the desirable properties explained in {{RFC8949}} section 3.4.6.  
+Specifically, it does not seem to conflict with any known file types, and it is not valid Unicode. 
 
-Array element number two is whatever the original CBOR content is supposed to be.
-Due the array construct with known size, there is no further syntax required.
+The second part identifies which CBOR Protocol is used.
+CBOR Protocol designers should obtain a tag for each major object that they might store on disk.  
+As there are more than 4 million available 4-byte tags, there should be issue in allocating a few to all available CBOR Protocols.
+The policy is First Come First Served, so all that is required is an email to IANA, having filled in the small template provided in section 9.2 of {{RFC8949}}.
 
-# Proposal Two
-
-This proposal uses a CBOR Sequence {{!RFC8742}}.
-
-Array element number one is a CBOR integer in the range 0x80000000 to 0xffffffff.
-This number is the magic number described below in {{magictable}}
-
-For a magic number 0x87653412, this results in a total of a five byte sequence:
-
-~~~~
-  0b000_11010 0x87 0x65 0x34 0x12
-~~~~
-
-This is followed by one or more CBOR data items of whatever type was intended.
-
-# Variations
-
-There are four variations.
-
-## Use a CBOR Tag on the entire file
-
-A two byte CBOR Tag could be used in proposal one to the array.
-This would add two bytes, bring the total flag bytes up to eight.
-The two byte sequence would have to start with 0b110_11000,
-followed by a one byte tag value, followed by the array as described above.
-
-## Use a CBOR Tag on the CBOR Integer
-
-A two or three byte CBOR Tag could be used in proposal two, applied to the CBOR Integer.
-
-Or, a two byte CBOR Tag could be used in proposal one, applied to the CBOR Integer,
-and not applied to the array.
-This would make the first four bytes of a CBOR encoded item recognizeably CBOR,
-with the next four bytes being the specific CBOR content.
-
-## Use a CBOR Tag on a constant CBOR Integer
-
-Instead of creating a new namespace (and IANA registry) for magic numbers, the CBOR Tag registry (which is very large) could be used.
-Rather than using the integer as the magic number, the Tag would be the magic number.
-Since the tag has to tag something, it could be some constant value could be tagged: a CBOR Null,
-or perhaps the CBOR string "cbor".
-
-It has been noted that the sequences "cbor" and "CBOR" are in fact valid
-encodings of the string "bor", and the byte array "BOR".
-Anyone rendering the file in ASCII (despite it being binary), would therefore see the word "cbor" or "CBOR" at the beginning of the file.
-
-
-# The Magic Number Registry {#magictable}
-
-In order to maintain uniqueness an IANA registry is required for the Magic Numbers.
-
-These Magic numbers would be 4-byte numbers in a First Come/First Served registry.
-Applicants would be encouraged to make a selection, and it would be encouraged to make the magic number a bit descriptive in ASCII.
-As a historic example, the IFF ILBM {{ilbm}} had a formatID whose bytes were: "ILBM", or 0x49 0x4C 0x42 0x4D.
-
-In the case where the CBOR Tag registry is used, then there are two options:
-
-1. allow requesters to select their own four (32-bit) or eight (64-bit) tags, from the First Come First Served Registry, using the existing instructions.
-
-2. amend the IANA instructions for {{RFC8949}} and carve out a 30-bit chunk of the four byte registry,
-or a 32-bit chunk of the eight byte registry.
-
-While in many cases CBOR encodings strive to be as compact as possible, for the purposes of a magic number registry for objects stored on disk, the use of between eight and twelve bytes is acceptable.
-
+The third part is a constant value 0x43\_42\_4f\_52, "CBOR".
+This means that should a file be reviewed by a human (directly in an editor, or in a hexdump display), it will include the string "CBOR" prominently.
+The value is also included because the two tags need to tag something.
 
 # Security Considerations
 
-ZZZ
+This document provides a way to identify CBOR Protocol objects.
+Clearly identifying CBOR contents on disk may have a variety of impacts.
+
+The most obvious is that it may allow malware to identify interesting objects on disk, and then corrupt them. 
 
 # IANA Considerations
 
-TBD
+This document makes no new requests to IANA.
 
 # Acknowledgements
 
-Hello.
+The CBOR WG brainstormed this protocol on January 20, 2021.
 
 # Changelog
 
