@@ -7,9 +7,9 @@ stand_alone: true
 
 ipr: trust200902
 area: Internet
-wg: anima Working Group
+wg: CBOR Working Group
 kw: Internet-Draft
-cat: std
+cat: bcp
 
 pi:    # can use array (if all yes) or hash here
   toc: yes
@@ -27,7 +27,7 @@ author:
 contributor:
   - name: Carsten Borman
     email: cabo@tzi.org
-  - name: Josef 'Jeff' Sipek 
+  - name: Josef 'Jeff' Sipek
     email: jeffpc@josefsipek.net
 
 normative:
