@@ -54,29 +54,30 @@ This document is being discussed at: https://github.com/mcr/cbor-magic-number
 
 # Introduction
 
-Since very early in computing, operating systems have sought ways to mark which files could be proposed by which programs.
+Since very early in computing, operating systems have sought ways to mark which files could be processed by which programs.
 
 For instance, the Unix file(1) command, which has existed since 1973 ({{file}}), has been able to identify many file formats for decades.
-Many systems (Linux, MacOS, Windows) will select the correct application based upon the file contents, if the system can determine it by other means.
-(MacOS maintains a resource fork that includes MIME information)
+Many systems (Linux, MacOS, Windows) will select the correct application based upon the file contents, if the system can not determine it by other means: for instsance, MacOS maintains a resource fork that includes MIME information and therefore ideally never needs to know what anything about the file.
+Other systems do this by file extensions.
 
 While having a MIME type associated with the file is a better solution in general, when files become disconnected from their type information, such as when attempting to do forensics on a damaged system,
 then being able to identify a file type can become very important.
 
-It is noted that in the MIME type registration, that a magic number is asked for, if available.
+It is noted that in the MIME type registration, that a magic number is asked for, if available, as is a file extension.
 
-A challenge for this program is often that it can be confused by the encoding vs the content.
+A challenge for the file(1) program is often that it can be confused by the encoding vs the content.
 For instance, an Android "apk" used to transfer and store an application may be identified as a ZIP file.
+Both OpenOffice or MSOffice files are XML files, but appear as ZIP, unless they are flat files, in which case they appear to be generic XML files.
 
-As CBOR becomes a more and more common encoding for artifacts, identifying them as CBOR is probably not useful.
+As CBOR becomes a more and more common encoding for a wide variety of artifacts, identifying them as  CBOR is probably not useful.
 This document provides a way to encode a magic number into the beginning of a CBOR format file.
 Two options are presented, with the intention of standardizing only one.
 
 These proposals are invasive to how CBOR protocols are written to disk, but in both cases, the
 proposed envelope does not require that the tag be transfered on the wire.
 
-Some protocols may benefit from having such a magic on the wire if they presently using a different (legacy) encoding scheme, and need to determine before invoking a CBOR decoder if the sender is
-using the legacy scheme, or the new CBOR scheme.
+In addition to the on-disk identification aspects, there are some protocols which may benefit from having such a magic on the wire if they presently using a different (legacy) encoding scheme.
+The presence of the identifiable magic sequence signals that CBOR is being used or a legacy scheme.
 
 # Requirements for a Magic Number
 
@@ -84,6 +85,7 @@ A magic number is ideally a unique fingerprint, present in the first 4 or 8 byte
 which does not change when the content change, and does not depend upon the length of the file.
 
 Less ideal solutions have a pattern that needs to be matched, but in which some bytes need to be ignored.
+While the Unix file(1) command can be told to ignore bytes, this can lead to ambiguities.
 
 # Proposal One
 
@@ -143,6 +145,11 @@ Instead of creating a new namespace (and IANA registry) for magic numbers, the C
 Rather than using the integer as the magic number, the Tag would be the magic number.
 Since the tag has to tag something, it could be some constant value could be tagged: a CBOR Null,
 or perhaps the CBOR string "cbor".
+
+It has been noted that the sequences "cbor" and "CBOR" are in fact valid
+encodings of the string "bor", and the byte array "BOR".
+Anyone rendering the file in ASCII (despite it being binary), would therefore see the word "cbor" or "CBOR" at the beginning of the file.
+
 
 # The Magic Number Registry {#magictable}
 
