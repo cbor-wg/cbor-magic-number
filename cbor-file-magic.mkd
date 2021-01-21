@@ -100,15 +100,15 @@ This proposal makes use of CBOR Sequences as described in {{RFC8742}}.
 
 This proposal consists of two tags and a constant string for a total of 12 bytes.
 
-1. The file shall start with the Self-described CBOR tag, 55799, as described in {{RFC8949}} section 3.4.6. 
+1. The file shall start with the Self-described CBOR tag, 55799, as described in {{RFC8949}} section 3.4.6.
 2. The file shall continue with a CBOR tag, from the First Come First Served space, which uniquely identifies the CBOR Protocol.  The use of a four-byte tag is encouraged.
 3. The three byte CBOR array containing 0x42\_4F\_52. When encoded it shows up as "CBOR"
 
-The first part identifies the file as being CBOR, and does so with all the desirable properties explained in {{RFC8949}} section 3.4.6.  
-Specifically, it does not seem to conflict with any known file types, and it is not valid Unicode. 
+The first part identifies the file as being CBOR, and does so with all the desirable properties explained in {{RFC8949}} section 3.4.6.
+Specifically, it does not seem to conflict with any known file types, and it is not valid Unicode.
 
 The second part identifies which CBOR Protocol is used.
-CBOR Protocol designers should obtain a tag for each major object that they might store on disk.  
+CBOR Protocol designers should obtain a tag for each major object that they might store on disk.
 As there are more than 4 million available 4-byte tags, there should be issue in allocating a few to all available CBOR Protocols.
 The policy is First Come First Served, so all that is required is an email to IANA, having filled in the small template provided in section 9.2 of {{RFC8949}}.
 
@@ -121,7 +121,7 @@ The value is also included because the two tags need to tag something.
 This document provides a way to identify CBOR Protocol objects.
 Clearly identifying CBOR contents on disk may have a variety of impacts.
 
-The most obvious is that it may allow malware to identify interesting objects on disk, and then corrupt them. 
+The most obvious is that it may allow malware to identify interesting objects on disk, and then corrupt them.
 
 # IANA Considerations
 
@@ -133,6 +133,34 @@ The CBOR WG brainstormed this protocol on January 20, 2021.
 
 # Changelog
 
-
 --- back
+
+# Example from Openswan
+
+The Openswan IPsec project has a daemon ("pluto"), and two control programs ("addconn", and "whack").
+They communicate via a Unix-domain socket, over which a C-structure containing pointers to strings is serialized using a bespoke mechanism.
+This is normally not a problem as the structure is compiled by the same compiler; but when there are upgrades it is possible for the daemon and the control programs to get out of sync by the bespoke serialization.
+As a result, there are extra compenstations to deal with shutting the daemon down.
+During testing it is sometimes the case that upgrades are backed out.
+
+In addition, when doing unit testing, the easiest way to load policy is to use the
+normal policy reading process, but that is not normally loaded in the daemon.
+Instead the IPC that is normally send across the wire is compiled/serialized and placed in a file.
+The above magic number is included in the file, and also on the IPC in order to distinguish the "shutdown" command CBOR operation.
+
+In order to reduce the problems due to serialization, the serialization is being changed to CBOR.
+Additionally, this change allows the IPC to be described by CDDL, and for any language that encode to CBOR can be used.
+
+IANA has allocated the tag 1330664270, or 0x4f\_50\_ 53\_ 4e for this purpose.
+As a result, each file and each IPC is prefixed with:
+
+In diagnostic notation:
+~~~~
+55799(1330664270(h'424F52'))
+~~~~
+
+Or in hex:
+~~~~
+00000000  d9 d9 f7 da 4f 50 53 4e  43 42 4f 52              |....OPSNCBOR|
+~~~~
 
