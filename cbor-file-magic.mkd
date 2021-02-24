@@ -74,11 +74,18 @@ It is noted that in the MIME type registration, that a magic number is asked for
 
 A challenge for the file(1) program is often that it can be confused by the encoding vs the content.
 For instance, an Android "apk" used to transfer and store an application may be identified as a ZIP file.
-Both OpenOffice or MSOffice files are XML files, but appear as ZIP, unless they are flat files, in which case they appear to be generic XML files.
+Both OpenOffice or MSOffice files are XML files, but appear as ZIP.
+Unless they OpenOffice files are flat (fodp) files, in which case they may appear to be generic XML files.
 
-As CBOR becomes a more and more common encoding for a wide variety of artifacts, identifying them as  CBOR is probably not useful.
+As CBOR becomes a more and more common encoding for a wide variety of artifacts, identifying them as just "CBOR" is probably not useful.
 This document provides a way to encode a magic number into the beginning of a CBOR format file.
-Two options are presented, with the intention of standardizing only one.
+Two options are presented: typically a CBOR Protocol author will specify one.
+
+A CBOR Protocol is a specification which uses CBOR as it's encoding.
+Examples of CBOR Protocols currently under development include CoSWID {{?I-D.ietf-sacm-coswid}}, and EAT {{?I-D.ietf-rats-eat}}.
+COSE itself {{?RFC8152}} is considered infrastructure, however the encoding of public keys in CBOR as described in {{?I-D.mattsson-cose-cbor-cert-compress}} would be an identified CBOR Protocol.
+
+A major inspiration for this document is observing the mess in ASN.1 based systems where most files are PEM encoded, identified by the extension "pem", confusing public keys, private keys, certificate requests and SIME content.
 
 These proposals are invasive to how CBOR protocols are written to disk, but in both cases, the
 proposed envelope does not require that the tag be transfered on the wire.
@@ -94,27 +101,56 @@ which does not change when the content change, and does not depend upon the leng
 Less ideal solutions have a pattern that needs to be matched, but in which some bytes need to be ignored.
 While the Unix file(1) command can be told to ignore bytes, this can lead to ambiguities.
 
-# Protocol Proposal
+# Protocol 
+
+There are two variations of this practice.  Both use CBOR Tags in a way that results in a deterministic first 8 to 12 bytes.
+
+## The CBOR Protocol Specific Tag
+
+CBOR Protocol designers should obtain a tag for each major object that they might store on disk.
+As there are more than 4 million available 4-byte tags, there should be issue in allocating a few to all available CBOR Protocols.
+
+The policy is First Come First Served, so all that is required is an email to IANA, having filled in the small template provided in section 9.2 of {{RFC8949}}.
+
+This tag should be allocated by the author of the CBOR Protocol, and to be in the four-byte range, it should be at least 0x01000000 (decimal 16777216) in value.
+
+The use of a sequence of four US-ASCII codes which are pneumonic to the protocol is encouraged, but not required.
+
+
+## CBOR Tag Wrapped
+
+This proposal starts with the Self-described CBOR tag, 55799, as described in {{RFC8949}} section 3.4.6.
+
+A second CBOR Tag is then allocated to describe the specific Protocol involved, as described above.
+
+This proposal wraps the CBOR value as tags usually do.
+Applications that need to send the CBOR value across a constrained link may wish to remove the two tags if the use is implicitely understood.  
+This is a decision of the CBOR Protocol specification.
+
+## CBOR Tag Sequence
 
 This proposal makes use of CBOR Sequences as described in {{RFC8742}}.
 
 This proposal consists of two tags and a constant string for a total of 12 bytes.
 
-1. The file shall start with the Self-described CBOR tag, 55799, as described in {{RFC8949}} section 3.4.6.
+1. The file shall start with the Self-described CBOR Sequence tag, 55800 (TBD1).
 2. The file shall continue with a CBOR tag, from the First Come First Served space, which uniquely identifies the CBOR Protocol.  The use of a four-byte tag is encouraged.
 3. The three byte CBOR array containing 0x42\_4F\_52. When encoded it shows up as "CBOR"
 
 The first part identifies the file as being CBOR, and does so with all the desirable properties explained in {{RFC8949}} section 3.4.6.
 Specifically, it does not seem to conflict with any known file types, and it is not valid Unicode.
 
-The second part identifies which CBOR Protocol is used.
-CBOR Protocol designers should obtain a tag for each major object that they might store on disk.
-As there are more than 4 million available 4-byte tags, there should be issue in allocating a few to all available CBOR Protocols.
-The policy is First Come First Served, so all that is required is an email to IANA, having filled in the small template provided in section 9.2 of {{RFC8949}}.
+The second part identifies which CBOR Protocol is used, as described above.
 
 The third part is a constant value 0x43\_42\_4f\_52, "CBOR".
+That is, it the three byte sequence 0x42\_4f\_52 ("BOR").
+This is the thing which is tagged.
+
+The actual CBOR Protocol value then follows, probably without any specific tag.
+The use of a CBOR Sequence allows the application to trivially remove the two tags.
+
 This means that should a file be reviewed by a human (directly in an editor, or in a hexdump display), it will include the string "CBOR" prominently.
-The value is also included because the two tags need to tag something.
+This value is also included simply because the two tags need to tag something.
 
 # Security Considerations
 
@@ -125,7 +161,24 @@ The most obvious is that it may allow malware to identify interesting objects on
 
 # IANA Considerations
 
-This document makes no new requests to IANA.
+IANA is asked to allocate one tag from the First Come, First Served Area of the Concise Binary Object Representation (CBOR) Tags, in the ("1+2") area.
+
+## CBOR Sequence Tag
+
+The requested value is 55800 (TBD1).
+The value has been picked to have properties similiar to the 55799 tag.
+
+The hexadecimal representation is: 0xd9\_\d9\_f8.
+
+This is not valid UTF-8: the first 0xd9 puts the value into the three-byte value of UTF-8, but the 0xd9 as the second value is not a valid second byte for UTF-8.
+
+This is not valid UTF-16: the byte sequence 0xd9d9 (in either endian order), puts this value into the UTF-16 high-half zone, which would signal that this a 32-bit Unicode value.  However, the following 16-bit big-endian value 0xf8.. is not a valid second sequence according to {{?RFC2781}}.
+On a little-endian system, it would be necessary to examine the fourth byte to determine if it is valid.  That next byte is determined by the subsequent encoding, and {{RFC8949}} section 3.4.6 has already determined that no valid CBOR encodings result in a valid UTF-16.
+
+~~~~
+Data Item: byte string
+Semantics: indicates that the file contains CBOR Sequences
+~~~~
 
 # Acknowledgements
 
@@ -156,11 +209,11 @@ As a result, each file and each IPC is prefixed with:
 
 In diagnostic notation:
 ~~~~
-55799(1330664270(h'424F52'))
+55800(1330664270(h'424F52'))
 ~~~~
 
 Or in hex:
 ~~~~
-00000000  d9 d9 f7 da 4f 50 53 4e  43 42 4f 52              |....OPSNCBOR|
+00000000  d9 d9 f8 da 4f 50 53 4e  43 42 4f 52              |....OPSNCBOR|
 ~~~~
 
