@@ -90,7 +90,7 @@ A major inspiration for this document is observing the mess in ASN.1 based syste
 These proposals are invasive to how CBOR protocols are written to disk, but in both cases, the
 proposed envelope does not require that the tag be transfered on the wire.
 
-In addition to the on-disk identification aspects, there are some protocols which may benefit from having such a magic on the wire if they presently using a different (legacy) encoding scheme.
+In addition to the on-disk identification aspects, there are some protocols which may benefit from having such a magic number on the wire if they presently using a different (legacy) encoding scheme.
 The presence of the identifiable magic sequence signals that CBOR is being used or a legacy scheme.
 
 # Requirements for a Magic Number
@@ -107,14 +107,14 @@ There are two variations of this practice.  Both use CBOR Tags in a way that res
 
 ## The CBOR Protocol Specific Tag
 
-CBOR Protocol designers should obtain a tag for each major object that they might store on disk.
-As there are more than 4 million available 4-byte tags, there should be issue in allocating a few to all available CBOR Protocols.
+CBOR Protocol designers should obtain a tag for each major type of object that they might store on disk.
+As there are more than 4 million available 4-byte tags, there should be little issue in allocating a few to each available CBOR Protocol.
 
 The policy is First Come First Served, so all that is required is an email to IANA, having filled in the small template provided in section 9.2 of {{RFC8949}}.
 
 This tag should be allocated by the author of the CBOR Protocol, and to be in the four-byte range, it should be at least 0x01000000 (decimal 16777216) in value.
 
-The use of a sequence of four US-ASCII codes which are pneumonic to the protocol is encouraged, but not required.
+The use of a sequence of four US-ASCII codes which are mnemonic to the protocol is encouraged, but not required.
 
 
 ## CBOR Tag Wrapped
@@ -124,7 +124,7 @@ This proposal starts with the Self-described CBOR tag, 55799, as described in {{
 A second CBOR Tag is then allocated to describe the specific Protocol involved, as described above.
 
 This proposal wraps the CBOR value as tags usually do.
-Applications that need to send the CBOR value across a constrained link may wish to remove the two tags if the use is implicitely understood.  
+Applications that need to send the CBOR value across a constrained link may wish to remove the two tags if the use is implicitly understood.  
 This is a decision of the CBOR Protocol specification.
 
 ## CBOR Tag Sequence
@@ -135,19 +135,19 @@ This proposal consists of two tags and a constant string for a total of 12 bytes
 
 1. The file shall start with the Self-described CBOR Sequence tag, 55800 (TBD1).
 2. The file shall continue with a CBOR tag, from the First Come First Served space, which uniquely identifies the CBOR Protocol.  The use of a four-byte tag is encouraged.
-3. The three byte CBOR array containing 0x42\_4F\_52. When encoded it shows up as "CBOR"
+3. The three byte CBOR byte string containing 0x42\_4F\_52. When encoded it shows up as "CBOR"
 
 The first part identifies the file as being CBOR, and does so with all the desirable properties explained in {{RFC8949}} section 3.4.6.
-Specifically, it does not seem to conflict with any known file types, and it is not valid Unicode.
+Specifically, it does not seem to conflict with any known file types, and it is not valid Unicode in any Unicode encoding.
 
 The second part identifies which CBOR Protocol is used, as described above.
 
 The third part is a constant value 0x43\_42\_4f\_52, "CBOR".
 That is, it the three byte sequence 0x42\_4f\_52 ("BOR").
-This is the thing which is tagged.
+This is the data item that is tagged.
 
-The actual CBOR Protocol value then follows, probably without any specific tag.
-The use of a CBOR Sequence allows the application to trivially remove the two tags.
+The actual CBOR Protocol value then follows as the next data item(s) in the CBOR sequence, without a need for any further specific tag.
+The use of a CBOR Sequence allows the application to trivially remove the first item with the two tags.
 
 This means that should a file be reviewed by a human (directly in an editor, or in a hexdump display), it will include the string "CBOR" prominently.
 This value is also included simply because the two tags need to tag something.
@@ -193,12 +193,12 @@ The CBOR WG brainstormed this protocol on January 20, 2021.
 The Openswan IPsec project has a daemon ("pluto"), and two control programs ("addconn", and "whack").
 They communicate via a Unix-domain socket, over which a C-structure containing pointers to strings is serialized using a bespoke mechanism.
 This is normally not a problem as the structure is compiled by the same compiler; but when there are upgrades it is possible for the daemon and the control programs to get out of sync by the bespoke serialization.
-As a result, there are extra compenstations to deal with shutting the daemon down.
+As a result, there are extra compensations to deal with shutting the daemon down.
 During testing it is sometimes the case that upgrades are backed out.
 
 In addition, when doing unit testing, the easiest way to load policy is to use the
 normal policy reading process, but that is not normally loaded in the daemon.
-Instead the IPC that is normally send across the wire is compiled/serialized and placed in a file.
+Instead the IPC that is normally sent across the wire is compiled/serialized and placed in a file.
 The above magic number is included in the file, and also on the IPC in order to distinguish the "shutdown" command CBOR operation.
 
 In order to reduce the problems due to serialization, the serialization is being changed to CBOR.
