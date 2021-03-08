@@ -25,7 +25,7 @@ author:
   email: mcr+ietf@sandelman.ca
 
 contributor:
-  - name: Carsten Borman
+  - name: Carsten Bormann
     email: cabo@tzi.org
   - name: Josef 'Jeff' Sipek
     email: jeffpc@josefsipek.net
@@ -63,25 +63,25 @@ This document is being discussed at: https://github.com/mcr/cbor-magic-number
 
 Since very early in computing, operating systems have sought ways to mark which files could be processed by which programs.
 
-For instance, the Unix file(1) command, which has existed since 1973 ({{file}}), has been able to identify many file formats for decades.
-Many systems (Linux, MacOS, Windows) will select the correct application based upon the file contents, if the system can not determine it by other means: for instsance, MacOS maintains a resource fork that includes MIME information and therefore ideally never needs to know what anything about the file.
+For instance, the Unix file(1) command, which has existed since 1973 {{file}}, has been able to identify many file formats for decades.
+Many systems (Linux, MacOS, Windows) will select the correct application based upon the file contents, if the system can not determine it by other means: for instance, the classic MacOS maintained a resource fork that includes media type ("MIME type") information and therefore ideally never needs to know what anything about the file.
 Other systems do this by file extensions.
 
-While having a MIME type associated with the file is a better solution in general, when files become disconnected from their type information, such as when attempting to do forensics on a damaged system,
+While having a media type associated with the file is a better solution in general, when files become disconnected from their type information, such as when attempting to do forensics on a damaged system,
 then being able to identify a file type can become very important.
 
-It is noted that in the MIME type registration, that a magic number is asked for, if available, as is a file extension.
+It is noted that in the media type registration, that a magic number is asked for, if available, as is a file extension.
 
 A challenge for the file(1) program is often that it can be confused by the encoding vs the content.
 For instance, an Android "apk" used to transfer and store an application may be identified as a ZIP file.
-Both OpenOffice or MSOffice files are XML files, but appear as ZIP.
-Unless they OpenOffice files are flat (fodp) files, in which case they may appear to be generic XML files.
+Both OpenOffice or MSOffice files are ZIP files of XML files.
+(Unless OpenOffice files are flat (fodp) files, in which case they may appear to be generic XML files.)
 
-As CBOR becomes a more and more common encoding for a wide variety of artifacts, identifying them as just "CBOR" is probably not useful.
+As CBOR becomes a more and more common encoding for a wide variety of artifacts, identifying them as just "CBOR" is probably not sufficient.
 This document provides a way to encode a magic number into the beginning of a CBOR format file.
 Two options are presented: typically a CBOR Protocol author will specify one.
 
-A CBOR Protocol is a specification which uses CBOR as it's encoding.
+A CBOR Protocol is a specification which uses CBOR as its encoding.
 Examples of CBOR Protocols currently under development include CoSWID {{?I-D.ietf-sacm-coswid}}, and EAT {{?I-D.ietf-rats-eat}}.
 COSE itself {{?RFC8152}} is considered infrastructure, however the encoding of public keys in CBOR as described in {{?I-D.mattsson-cose-cbor-cert-compress}} would be an identified CBOR Protocol.
 
@@ -90,13 +90,13 @@ A major inspiration for this document is observing the mess in ASN.1 based syste
 These proposals are invasive to how CBOR protocols are written to disk, but in both cases, the
 proposed envelope does not require that the tag be transfered on the wire.
 
-In addition to the on-disk identification aspects, there are some protocols which may benefit from having such a magic on the wire if they presently using a different (legacy) encoding scheme.
+In addition to the on-disk identification aspects, there are some protocols which may benefit from having such a magic number on the wire if they presently using a different (legacy) encoding scheme.
 The presence of the identifiable magic sequence signals that CBOR is being used or a legacy scheme.
 
 # Requirements for a Magic Number
 
 A magic number is ideally a unique fingerprint, present in the first 4 or 8 bytes of the file,
-which does not change when the content change, and does not depend upon the length of the file.
+which does not change when the contents change, and does not depend upon the length of the file.
 
 Less ideal solutions have a pattern that needs to be matched, but in which some bytes need to be ignored.
 While the Unix file(1) command can be told to ignore bytes, this can lead to ambiguities.
@@ -107,14 +107,14 @@ There are two variations of this practice.  Both use CBOR Tags in a way that res
 
 ## The CBOR Protocol Specific Tag
 
-CBOR Protocol designers should obtain a tag for each major object that they might store on disk.
-As there are more than 4 million available 4-byte tags, there should be issue in allocating a few to all available CBOR Protocols.
+CBOR Protocol designers should obtain a tag for each major type of object that they might store on disk.
+As there are more than 4 million available 4-byte tags, there should be little issue in allocating a few to each available CBOR Protocol.
 
 The policy is First Come First Served, so all that is required is an email to IANA, having filled in the small template provided in section 9.2 of {{RFC8949}}.
 
 This tag should be allocated by the author of the CBOR Protocol, and to be in the four-byte range, it should be at least 0x01000000 (decimal 16777216) in value.
 
-The use of a sequence of four US-ASCII codes which are pneumonic to the protocol is encouraged, but not required.
+The use of a sequence of four US-ASCII codes which are mnemonic to the protocol is encouraged, but not required.
 
 
 ## CBOR Tag Wrapped
@@ -124,7 +124,7 @@ This proposal starts with the Self-described CBOR tag, 55799, as described in {{
 A second CBOR Tag is then allocated to describe the specific Protocol involved, as described above.
 
 This proposal wraps the CBOR value as tags usually do.
-Applications that need to send the CBOR value across a constrained link may wish to remove the two tags if the use is implicitely understood.  
+Applications that need to send the CBOR value across a constrained link may wish to remove the two tags if the use is implicitly understood.  
 This is a decision of the CBOR Protocol specification.
 
 ## CBOR Tag Sequence
@@ -135,19 +135,19 @@ This proposal consists of two tags and a constant string for a total of 12 bytes
 
 1. The file shall start with the Self-described CBOR Sequence tag, 55800 (TBD1).
 2. The file shall continue with a CBOR tag, from the First Come First Served space, which uniquely identifies the CBOR Protocol.  The use of a four-byte tag is encouraged.
-3. The three byte CBOR array containing 0x42\_4F\_52. When encoded it shows up as "CBOR"
+3. The three byte CBOR byte string containing 0x42\_4F\_52. When encoded it shows up as "CBOR"
 
 The first part identifies the file as being CBOR, and does so with all the desirable properties explained in {{RFC8949}} section 3.4.6.
-Specifically, it does not seem to conflict with any known file types, and it is not valid Unicode.
+Specifically, it does not seem to conflict with any known file types, and it is not valid Unicode in any Unicode encoding.
 
 The second part identifies which CBOR Protocol is used, as described above.
 
 The third part is a constant value 0x43\_42\_4f\_52, "CBOR".
 That is, it the three byte sequence 0x42\_4f\_52 ("BOR").
-This is the thing which is tagged.
+This is the data item that is tagged.
 
-The actual CBOR Protocol value then follows, probably without any specific tag.
-The use of a CBOR Sequence allows the application to trivially remove the two tags.
+The actual CBOR Protocol value then follows as the next data item(s) in the CBOR sequence, without a need for any further specific tag.
+The use of a CBOR Sequence allows the application to trivially remove the first item with the two tags.
 
 This means that should a file be reviewed by a human (directly in an editor, or in a hexdump display), it will include the string "CBOR" prominently.
 This value is also included simply because the two tags need to tag something.
@@ -193,12 +193,12 @@ The CBOR WG brainstormed this protocol on January 20, 2021.
 The Openswan IPsec project has a daemon ("pluto"), and two control programs ("addconn", and "whack").
 They communicate via a Unix-domain socket, over which a C-structure containing pointers to strings is serialized using a bespoke mechanism.
 This is normally not a problem as the structure is compiled by the same compiler; but when there are upgrades it is possible for the daemon and the control programs to get out of sync by the bespoke serialization.
-As a result, there are extra compenstations to deal with shutting the daemon down.
+As a result, there are extra compensations to deal with shutting the daemon down.
 During testing it is sometimes the case that upgrades are backed out.
 
 In addition, when doing unit testing, the easiest way to load policy is to use the
 normal policy reading process, but that is not normally loaded in the daemon.
-Instead the IPC that is normally send across the wire is compiled/serialized and placed in a file.
+Instead the IPC that is normally sent across the wire is compiled/serialized and placed in a file.
 The above magic number is included in the file, and also on the IPC in order to distinguish the "shutdown" command CBOR operation.
 
 In order to reduce the problems due to serialization, the serialization is being changed to CBOR.
