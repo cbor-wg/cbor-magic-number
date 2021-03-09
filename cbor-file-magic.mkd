@@ -133,7 +133,7 @@ This proposal makes use of CBOR Sequences as described in {{RFC8742}}.
 
 This proposal consists of two tags and a constant string for a total of 12 bytes.
 
-1. The file shall start with the Self-described CBOR Sequence tag, 55800 (TBD1).
+1. The file shall start with the Self-described CBOR Sequence tag, 55800.
 2. The file shall continue with a CBOR tag, from the First Come First Served space, which uniquely identifies the CBOR Protocol.  The use of a four-byte tag is encouraged.
 3. The three byte CBOR byte string containing 0x42\_4F\_52. When encoded it shows up as "CBOR"
 
@@ -161,11 +161,14 @@ The most obvious is that it may allow malware to identify interesting objects on
 
 # IANA Considerations
 
-IANA is asked to allocate one tag from the First Come, First Served Area of the Concise Binary Object Representation (CBOR) Tags, in the ("1+2") area.
+There are no IANA actions.
+This section documents the allocation that was done.
 
 ## CBOR Sequence Tag
 
-The requested value is 55800 (TBD1).
+IANA has allocated tag 55800 as the CBOR Sequence tag.
+This tag is from the First Come/First Served area.
+
 The value has been picked to have properties similiar to the 55799 tag.
 
 The hexadecimal representation is: 0xd9\_\d9\_f8.
