@@ -55,7 +55,7 @@ informative:
 This document proposes an on-disk format for CBOR objects that
 is friendly to common on-disk recognition systems like the Unix file(1) command.
 
-This document is being discussed at: https://github.com/mcr/cbor-magic-number
+This document is being discussed at: https://github.com/cbor-wg/cbor-magic-number
 
 --- middle
 
@@ -101,7 +101,7 @@ which does not change when the contents change, and does not depend upon the len
 Less ideal solutions have a pattern that needs to be matched, but in which some bytes need to be ignored.
 While the Unix file(1) command can be told to ignore bytes, this can lead to ambiguities.
 
-# Protocol 
+# Protocol
 
 There are two variations of this practice.  Both use CBOR Tags in a way that results in a deterministic first 8 to 12 bytes.
 
@@ -124,7 +124,7 @@ This proposal starts with the Self-described CBOR tag, 55799, as described in {{
 A second CBOR Tag is then allocated to describe the specific Protocol involved, as described above.
 
 This proposal wraps the CBOR value as tags usually do.
-Applications that need to send the CBOR value across a constrained link may wish to remove the two tags if the use is implicitly understood.  
+Applications that need to send the CBOR value across a constrained link may wish to remove the two tags if the use is implicitly understood.
 This is a decision of the CBOR Protocol specification.
 
 ## CBOR Tag Sequence

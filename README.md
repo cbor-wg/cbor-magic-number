@@ -1,12 +1,13 @@
-# ANIMA operational considerations for BRSKI Registrar
+# On storing CBOR encoded items on stable storage
 
-The ANIMA WG Bootstrapping Remote Secure Key Infrastructure (BRSKI)
-protocol involves three parties: Pledge (device), Registrar and
-Manufacturer Authorized Signing Authority (MASA).
+This document proposes an on-disk format for CBOR objects that
+is friendly to common on-disk recognition systems like the Unix file(1) command.
 
-This repository contains operational considerations for the Registrar
-function.  It is a candidate document for the ANIMA WG
-http://datatracker.ietf.org/wg/anima 
+This document has been adopted by the CBOR WG, is being discussed at: https://github.com/cbor-wg/cbor-magic-number
+and at cbor@ietf.org
+
+
+
 
 
 
