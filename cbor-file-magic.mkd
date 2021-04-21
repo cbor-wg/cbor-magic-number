@@ -1,7 +1,7 @@
 ---
 title: On storing CBOR encoded items on stable storage
 abbrev: cbor-file-magic
-docname: draft-ietf-cbor-file-magic-01
+docname: draft-ietf-cbor-file-magic-02
 
 stand_alone: true
 
@@ -132,7 +132,7 @@ For CBOR byte strings that happen to contain a representation that is
 described by a CoAP Content-Format Number ({{Section 12.3 of -coap}},
 Subregistry
 {{Content-Formats<IANA.core-parameters}}{:relative="#content-formats"}
-of {{IANA.core-parameters}}), 
+of {{IANA.core-parameters}}),
 a tag number has been allocated in {{iana-ct-tags}} (see {{ct-tags}}
 for details and examples).
 
@@ -315,8 +315,13 @@ Subregistry {{Content-Formats<IANA.core-parameters}}{:relative="#content-formats
   parameters).
   The corresponding tag number is 1668546992 (i.e., 1668546560+432).
 
+<<<<<<< HEAD
   So the following CDDL snippet can
   be used to identify application/td+json representations:
+=======
+  So the following CDDL snippet can be used to identify
+  application/td+json representations:
+>>>>>>> 9c58b2e (updated version number)
 
   ~~~~ cddl
   td-json = #6.1668546992(bstr)
@@ -329,10 +334,10 @@ Subregistry {{Content-Formats<IANA.core-parameters}}{:relative="#content-formats
   deflate encoding.
 
   The corresponding tag number is 1668557610 (i.e., 1668546560+11050).
-  
+
   So the following CDDL snippet can be used to identify
   application/json representations compressed in deflate encoding:
-  
+
   ~~~~ cddl
   json-deflate = #6.1668557610(bstr)
   ~~~~
