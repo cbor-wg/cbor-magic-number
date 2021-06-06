@@ -83,7 +83,7 @@ Two options are presented: typically a CBOR Protocol author will specify one.
 
 A CBOR Protocol is a specification which uses CBOR as its encoding.
 Examples of CBOR Protocols currently under development include CoSWID {{?I-D.ietf-sacm-coswid}}, and EAT {{?I-D.ietf-rats-eat}}.
-COSE itself {{?RFC8152}} is considered infrastructure, however the encoding of public keys in CBOR as described in {{?I-D.mattsson-cose-cbor-cert-compress}} would be an identified CBOR Protocol.
+COSE itself {{?RFC8152}} is considered infrastructure, however the encoding of public keys in CBOR as described in {{?I-D.ietf-cose-cbor-encoded-cert}} would be an identified CBOR Protocol.
 
 A major inspiration for this document is observing the mess in ASN.1 based systems where most files are PEM encoded, identified by the extension "pem", confusing public keys, private keys, certificate requests and SIME content.
 
@@ -108,7 +108,7 @@ There are two variations of this practice.  Both use CBOR Tags in a way that res
 ## The CBOR Protocol Specific Tag
 
 CBOR Protocol designers should obtain a tag for each major type of object that they might store on disk.
-As there are more than 4 million available 4-byte tags, there should be little issue in allocating a few to each available CBOR Protocol.
+As there are more than 4 billion available 4-byte tags, there should be little issue in allocating a few to each available CBOR Protocol.
 
 The policy is First Come First Served, so all that is required is an email to IANA, having filled in the small template provided in section 9.2 of {{RFC8949}}.
 
