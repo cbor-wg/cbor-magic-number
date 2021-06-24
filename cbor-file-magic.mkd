@@ -152,7 +152,7 @@ The use of a CBOR Sequence allows the application to trivially remove the first 
 This means that should a file be reviewed by a human (directly in an editor, or in a hexdump display), it will include the string "CBOR" prominently.
 This value is also included simply because the two tags need to tag something.
 
-# Adice to Protocol Developers
+# Advice to Protocol Developers
 
 This document introduces a choice between a CBOR Sequence and a wrapped CBOR Tag.
 Which should a protocol designer use?
