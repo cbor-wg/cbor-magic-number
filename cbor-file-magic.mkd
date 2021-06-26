@@ -24,7 +24,9 @@ author:
 
 contributor:
   - name: Carsten Bormann
+    org: Universität Bremen TZI
     email: cabo@tzi.org
+    country: Germany
   - name: Josef 'Jeff' Sipek
     email: jeffpc@josefsipek.net
 
@@ -47,6 +49,9 @@ informative:
     author:
       org: Wikipedia
     date: 2021-01-20
+
+  I-D.bormann-cbor-tag-coap-content-format: ct-tags
+  RFC7252: coap
 
 --- abstract
 
@@ -114,6 +119,8 @@ This tag should be allocated by the author of the CBOR Protocol, and to be in th
 
 The use of a sequence of four US-ASCII codes which are mnemonic to the protocol is encouraged, but not required.
 
+For CBOR byte strings containing a representation that is described by a CoAP Content-Format Number ({{Section 12.3 of -coap}}, {{?IANA.core-parameters}}), {{-ct-tags}} has already allocated a tag number.
+
 
 ## CBOR Tag Wrapped
 
@@ -143,7 +150,7 @@ Specifically, it does not seem to conflict with any known file types, and it is 
 The second part identifies which CBOR Protocol is used, as described above.
 
 The third part is a constant value 0x43\_42\_4f\_52, "CBOR".
-That is, it the three byte sequence 0x42\_4f\_52 ("BOR").
+That is, the CBOR encoded data item for the three byte sequence 0x42\_4f\_52 ("BOR").
 This is the data item that is tagged.
 
 The actual CBOR Protocol value then follows as the next data item(s) in the CBOR sequence, without a need for any further specific tag.
