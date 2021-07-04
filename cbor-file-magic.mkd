@@ -10,6 +10,7 @@ area: Internet
 wg: CBOR Working Group
 kw: Internet-Draft
 cat: bcp
+consensus: true
 
 pi:    # can use array (if all yes) or hash here
   toc: yes
@@ -42,16 +43,16 @@ informative:
       org: Wikipedia
     date: 2021-01-20
 
-  # Still needed?   XXX
-  ilbm:
-    title: "Interleaved BitMap"
-    target: "https://en.wikipedia.org/wiki/ILBM"
-    author:
-      org: Wikipedia
-    date: 2021-01-20
+#  # Still needed?   XXX
+#  ilbm:
+#    title: "Interleaved BitMap"
+#    target: "https://en.wikipedia.org/wiki/ILBM"
+#    author:
+#      org: Wikipedia
+#    date: 2021-01-20
 
-  I-D.bormann-cbor-tag-coap-content-format: ct-tags
   RFC7252: coap
+  IANA.core-parameters:
 
 --- abstract
 
@@ -67,7 +68,7 @@ This document is being discussed at: https://github.com/cbor-wg/cbor-magic-numbe
 Since very early in computing, operating systems have sought ways to mark which files could be processed by which programs.
 
 For instance, the Unix file(1) command, which has existed since 1973 {{file}}, has been able to identify many file formats for decades.
-Many systems (Linux, MacOS, Windows) will select the correct application based upon the file contents, if the system can not determine it by other means: for instance, the classic MacOS maintained a resource fork that includes media type ("MIME type") information and therefore ideally never needs to know what anything about the file.
+Many systems (Linux, MacOS, Windows) will select the correct application based upon the file contents, if the system can not determine it by other means: for instance, the classic MacOS maintained a resource fork that includes media type ("MIME type") information and therefore ideally never needs to know anything about the file.
 Other systems do this by file extensions.
 
 While having a media type associated with the file is a better solution in general, when files become disconnected from their type information, such as when attempting to do forensics on a damaged system,
@@ -119,8 +120,13 @@ This tag should be allocated by the author of the CBOR Protocol, and to be in th
 
 The use of a sequence of four US-ASCII codes which are mnemonic to the protocol is encouraged, but not required.
 
-For CBOR byte strings containing a representation that is described by a CoAP Content-Format Number ({{Section 12.3 of -coap}}, {{?IANA.core-parameters}}), {{-ct-tags}} has already allocated a tag number.
-
+For CBOR byte strings that happen to contain a representation that is
+described by a CoAP Content-Format Number ({{Section 12.3 of -coap}},
+Subregistry
+{{Content-Formats<IANA.core-parameters}}{:relative="#content-formats"}
+of {{IANA.core-parameters}}), 
+a tag number has been allocated in {{iana-ct-tags}} (see {{ct-tags}}
+for details and examples).
 
 ## CBOR Tag Wrapped
 
@@ -168,8 +174,10 @@ The most obvious is that it may allow malware to identify interesting objects on
 
 # IANA Considerations
 
-There are no IANA actions.
-This section documents the allocation that was done.
+{{cbor-sequence-tag}} documents the allocation that was done for a
+CBOR tag to be used in a CBOR sequence to identify the sequence.
+{{iana-ct-tags}} allocates a CBOR tag for each actual or
+potential CoAP Content-Format number.
 
 ## CBOR Sequence Tag
 
@@ -185,12 +193,86 @@ This is not valid UTF-8: the first 0xd9 puts the value into the three-byte value
 This is not valid UTF-16: the byte sequence 0xd9d9 (in either endian order) puts this value into the UTF-16 high-half zone, which would signal that this a 32-bit Unicode value.  However, the following 16-bit big-endian value 0xf8.. is not a valid second sequence according to {{?RFC2781}}.
 On a little-endian system, it would be necessary to examine the fourth byte to determine if it is valid.  That next byte is determined by the subsequent encoding, and {{Section 3.4.6 of RFC8949}} has already determined that no valid CBOR encodings result in a valid UTF-16.
 
-~~~~
-Data Item: byte string
-Semantics: indicates that the file contains CBOR Sequences
-~~~~
+
+{: newline="true"}
+Data Item:
+: byte string
+
+Semantics:
+: indicates that the file contains CBOR Sequences
+
+
+## CBOR Tags for CoAP Content-Format Numbers {#iana-ct-tags}
+
+IANA is requested to allocate the
+tag numbers 1668546560 (0x63740000) to
+1668612095 (0x6374FFFF) as follows:
+
+{: newline="true"}
+Data Item:
+: byte string
+
+Semantics:
+: for each tag number NNNN, the representation of content-format (RFC7252) NNNN-1668546560
+
+Reference:
+: RFCthis
+
+
+(More details in {{ct-tags}}.)
 
 --- back
+
+# CBOR Tags for CoAP Content Formats {#ct-tags}
+
+Often, there is a need to identify a media type (or content type,
+i.e., media type optionally used with parameters) that describes a
+byte string in a CBOR data item.
+
+{{Section 5.10.3 of -coap}} defines the concept of a Content-Format,
+which is a short 16-bit unsigned integer that identifies a specific
+content type (media type plus optionally parameters), optionally
+together with a content encoding.
+
+This specification allocates CBOR tag numbers 1668546560 (0x63740000) to
+1668612095 (0x6374FFFF) for the tagging of representations of specific
+content formats.
+The tag content tagged with tag number NNNN (in above range) is a byte
+string that is to be interpreted as a representation of the content
+format NNNN-1668546560.
+
+## Content-Format Tag Examples
+
+Subregistry {{Content-Formats<IANA.core-parameters}}{:relative="#content-formats"} of {{IANA.core-parameters}} defines content formats that can be used as examples:
+
+* Content-Format 432 stands for media type application/td+json (no
+  parameters).
+  The corresponding tag number is 1668546992 (i.e., 1668546560+432).
+  
+  So the following CDDL snippet can be used to identify
+  application/td+json representations:
+  
+  ~~~~ cddl
+  td-json = #6.1668546992(bstr)
+  ~~~~
+
+  Note that a byte string is used as the type of the tag content, because a
+  media type representation in general can be any byte string.
+
+* Content-Format 11050 stands for media type application/json in
+  deflate encoding.
+
+  The corresponding tag number is 1668557610 (i.e., 1668546560+11050).
+  
+  So the following CDDL snippet can be used to identify
+  application/json representations compressed in deflate encoding:
+  
+  ~~~~ cddl
+  json-deflate = #6.1668557610(bstr)
+  ~~~~
+
+  The byte string is appropriate here as the type for the tag content,
+  because the compressed form is an instance of a general byte string.
 
 # Example from Openswan
 
