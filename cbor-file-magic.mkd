@@ -190,6 +190,12 @@ This new sequence of tags are expected to be trivially ignored by an existing pr
 But, a naive program might also then transmit them across the network.
 Removing the CBOR Tag Wrapped format requires knowledge of the two tags involved.
 Other tags present might be needed.
+For a representation matching a specific media-type that is carried in
+a CBOR byte string, the byte string head will already have to be
+removed for use as such a representation, so it should be easy to
+remove the enclosing tag heads as well.
+This is of particular interest with the pre-defined tags provided by
+{{ct-tags}} for media-types with CoAP Content-Format numbers.
 
 Here are some considerations:
 
