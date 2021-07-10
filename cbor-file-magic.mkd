@@ -22,12 +22,12 @@ author:
   name: Michael Richardson
   org: Sandelman Software Works
   email: mcr+ietf@sandelman.ca
+- name: Carsten Bormann
+  org: Universität Bremen TZI
+  email: cabo@tzi.org
+  country: Germany
 
 contributor:
-  - name: Carsten Bormann
-    org: Universität Bremen TZI
-    email: cabo@tzi.org
-    country: Germany
   - name: Josef 'Jeff' Sipek
     email: jeffpc@josefsipek.net
 
