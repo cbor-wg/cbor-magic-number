@@ -1,7 +1,7 @@
 ---
 title: On storing CBOR encoded items on stable storage
 abbrev: cbor-file-magic
-docname: draft-ietf-cbor-file-magic-00
+docname: draft-ietf-cbor-file-magic-01
 
 stand_alone: true
 
@@ -164,6 +164,54 @@ The use of a CBOR Sequence allows the application to trivially remove the first 
 
 This means that should a file be reviewed by a human (directly in an editor, or in a hexdump display), it will include the string "CBOR" prominently.
 This value is also included simply because the two tags need to tag something.
+
+# Advice to Protocol Developers
+
+This document introduces a choice between a CBOR Sequence and a wrapped CBOR Tag.
+Which should a protocol designer use?
+
+In this discussion, one assumes that there is an object stored in a file, perhaps specified by a system operator in a configuration file.
+
+For example: a private key used in COSE operations, a public key/certificate in C509 or CBOR format, a recorded sensor reading stored for later transmission, or a COVID vaccination certificate that needs to be displayed in QRcode form.
+
+Both the CBOR Tag Sequence and the wrapped tag can be trivially removed by an application before sending the CBOR content out on the wire.
+
+The CBOR Tag Sequence is a little bit easier to remove as in most cases, CBOR parsers will return it as a unit, and then return the actual CBOR item, which could be anything at all, and could include CBOR tags that *do* need to be sent on wire.
+
+On the other hand, having the CBOR Tag Sequence in the file requires that all programs that expect to examine that file are able to skip what appears to be an empty CBOR item.
+Programs which might not expect the CBOR Tag Sequence, but which would operate without a problem would include any program that expects to process CBOR Sequences from the file.
+
+As an example of where there was a problem with previous security systems, "PEM" format certificate files grew to be able to contain multiple certificates by simple concatenation.
+The PKCS1 format could also contain a private key object followed by a one or more certificate  objects: but only when in PEM format.
+But, when in binary DER format, concatenation of certificates was not compatible with most programs.
+
+The use of CBOR Tag Wrapped format is easier to retrofit to an existing format with existing and unchangeable on-disk format.
+This new sequence of tags are expected to be trivially ignored by an existing program when reading CBOR from disk.
+But, a naive program might also then transmit them across the network.
+Removing the CBOR Tag Wrapped format requires knowledge of the two tags involved.
+Other tags present might be needed.
+
+Here are some considerations:
+
+## Is the on-wire format new?
+
+If the on-wire format is new, then it could be specified with the CBOR Tag Wrapped format if the extra eight bytes are not a problem.
+The disk format is then identical to the on-wire format.
+
+If the eight bytes are a problem (and they usually are if CBOR is being considered), then the CBOR Tag Sequence format should be adopted for on-disk storage.
+
+## Can many items be trivially concatenated?
+
+If the programs that read the contents of the file already expect to process all of the items in the file (not just the first), then the CBOR Tag Sequence format may be easily retrofitted.
+
+The program involved may throw errors or warnings on the CBOR Tag Sequence if they have not yet been updated, but this may not be a problem.
+If it is, then consideration should be given to CBOR Tag Wrapped.
+
+If only one item is ever expected in the file, the the use of CBOR Tag Sequence may present an implementation hurdle to programs that previously just read a single value and used it.
+
+## Are there tags at the start?
+
+If the Protocol expects to use other tags values at the top-level, then it may be easier to explain if the CBOR Tag Sequence format is used.
 
 # Security Considerations
 
