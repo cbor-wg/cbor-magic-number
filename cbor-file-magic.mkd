@@ -50,7 +50,7 @@ informative:
 #    author:
 #      org: Wikipedia
 #    date: 2021-01-20
-
+  RFC8610:
   RFC7252: coap
   IANA.core-parameters:
 
@@ -96,6 +96,14 @@ proposed envelope does not require that the tag be transferred on the wire.
 
 In addition to the on-disk identification aspects, there are some protocols which may benefit from having such a magic number on the wire if they presently using a different (legacy) encoding scheme.
 The presence of the identifiable magic sequence signals that CBOR is being used or a legacy scheme.
+
+## Terminology
+
+The term "diagnostic notation" refers to the human-readable notation
+for CBOR data items defined in {{Section 8 of RFC8949}} and {{Section G of RFC8610}}.
+
+The term CDDL (Concise Data Definition Language) refers to the
+language defined in {{RFC8610}}.
 
 # Requirements for a Magic Number
 
@@ -147,22 +155,25 @@ This proposal consists of two tags and a constant string for a total of 12 bytes
 
 1. The file shall start with the Self-described CBOR Sequence tag, 55800.
 2. The file shall continue with a CBOR tag, from the First Come First Served space, which uniquely identifies the CBOR Protocol.  The use of a four-byte tag is encouraged.
-3. The three byte CBOR byte string containing 0x42\_4F\_52. When encoded it shows up as "CBOR"
+3. The three byte CBOR byte string containing 0x42\_4F\_52.
 
-The first part identifies the file as being CBOR, and does so with all
+The first part identifies the file as being a CBOR Sequence, and does so with all
 the desirable properties explained in {{Section 3.4.6 of RFC8949}}.
 Specifically, it does not seem to conflict with any known file types, and it is not valid Unicode in any Unicode encoding.
 
 The second part identifies which CBOR Protocol is used, as described above.
 
-The third part is a constant value 0x43\_42\_4f\_52, "CBOR".
-That is, the CBOR encoded data item for the three byte sequence 0x42\_4f\_52 ("BOR").
-This is the data item that is tagged.
+The third part is represented as a constant byte sequence
+0x43\_42\_4f\_52, the ASCII characters "CBOR",
+which is the CBOR encoded data item for the three byte sequence
+0x42\_4f\_52 ('BOR' in diagnostic notation).
+This is the data item that is being tagged.
 
 The actual CBOR Protocol value then follows as the next data item(s) in the CBOR sequence, without a need for any further specific tag.
 The use of a CBOR Sequence allows the application to trivially remove the first item with the two tags.
 
-This means that should a file be reviewed by a human (directly in an editor, or in a hexdump display), it will include the string "CBOR" prominently.
+This means that should a file be reviewed by a human (directly in an
+editor, or in a hexdump display), it will include the ASCII characters "CBOR" prominently.
 This value is also included simply because the two tags need to tag something.
 
 # Advice to Protocol Developers
@@ -186,8 +197,10 @@ The PKCS1 format could also contain a private key object followed by a one or mo
 But, when in binary DER format, concatenation of certificates was not compatible with most programs.
 
 The use of CBOR Tag Wrapped format is easier to retrofit to an existing format with existing and unchangeable on-disk format.
-This new sequence of tags are expected to be trivially ignored by an existing program when reading CBOR from disk.
-But, a naive program might also then transmit them across the network.
+This new sequence of tags are expected to be trivially ignored by an
+existing program when reading CBOR from disk, even if the program only
+supports decoding a single data item (and not a CBOR sequence).
+But, a naive program might also then transmit the additional tags across the network.
 Removing the CBOR Tag Wrapped format requires knowledge of the two tags involved.
 Other tags present might be needed.
 For a representation matching a specific media-type that is carried in
@@ -229,9 +242,10 @@ The most obvious is that it may allow malware to identify interesting objects on
 # IANA Considerations
 
 {{cbor-sequence-tag}} documents the allocation that was done for a
-CBOR tag to be used in a CBOR sequence to identify the sequence.
+CBOR tag to be used in a CBOR sequence to identify the sequence (an
+example for using this tag is found in {{openswan}}).
 {{iana-ct-tags}} allocates a CBOR tag for each actual or
-potential CoAP Content-Format number.
+potential CoAP Content-Format number (examples are in {{ct-tags}}).
 
 ## CBOR Sequence Tag
 
@@ -273,8 +287,6 @@ Reference:
 : RFCthis
 
 
-(More details in {{ct-tags}}.)
-
 --- back
 
 # CBOR Tags for CoAP Content Formats {#ct-tags}
@@ -302,10 +314,10 @@ Subregistry {{Content-Formats<IANA.core-parameters}}{:relative="#content-formats
 * Content-Format 432 stands for media type application/td+json (no
   parameters).
   The corresponding tag number is 1668546992 (i.e., 1668546560+432).
-  
-  So the following CDDL snippet can be used to identify
-  application/td+json representations:
-  
+
+  So the following CDDL snippet can
+  be used to identify application/td+json representations:
+
   ~~~~ cddl
   td-json = #6.1668546992(bstr)
   ~~~~
@@ -328,7 +340,7 @@ Subregistry {{Content-Formats<IANA.core-parameters}}{:relative="#content-formats
   The byte string is appropriate here as the type for the tag content,
   because the compressed form is an instance of a general byte string.
 
-# Example from Openswan
+# Example from Openswan {#openswan}
 
 The Openswan IPsec project has a daemon ("pluto"), and two control programs ("addconn", and "whack").
 They communicate via a Unix-domain socket, over which a C-structure containing pointers to strings is serialized using a bespoke mechanism.
