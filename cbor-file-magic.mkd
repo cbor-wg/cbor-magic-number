@@ -1,7 +1,7 @@
 ---
 title: On storing CBOR encoded items on stable storage
 abbrev: cbor-file-magic
-docname: draft-ietf-cbor-file-magic-02
+docname: draft-ietf-cbor-file-magic-03
 
 stand_alone: true
 
@@ -315,13 +315,8 @@ Subregistry {{Content-Formats<IANA.core-parameters}}{:relative="#content-formats
   parameters).
   The corresponding tag number is 1668546992 (i.e., 1668546560+432).
 
-<<<<<<< HEAD
-  So the following CDDL snippet can
-  be used to identify application/td+json representations:
-=======
   So the following CDDL snippet can be used to identify
   application/td+json representations:
->>>>>>> 9c58b2e (updated version number)
 
   ~~~~ cddl
   td-json = #6.1668546992(bstr)
