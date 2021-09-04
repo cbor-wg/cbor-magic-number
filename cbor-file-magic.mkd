@@ -80,7 +80,7 @@ It is noted that in the media type registration, that a magic number is asked fo
 
 A challenge for the file(1) program is often that it can be confused by the encoding vs the content.
 For instance, an Android "apk" used to transfer and store an application may be identified as a ZIP file.
-Additionaly, both OpenOffice or MSOffice files are ZIP files of XML files.
+Additionally, both OpenOffice or MSOffice files are ZIP files of XML files.
 
 As CBOR becomes a more and more common encoding for a wide variety of artifacts, identifying them as just "CBOR" is probably not sufficient.
 This document provides a way to encode a magic number into the beginning of a CBOR format file.
@@ -115,7 +115,7 @@ While the Unix file(1) command can be told to ignore bytes, this can lead to amb
 
 # Protocol
 
-There are two methods presented.  Which one is to be used is up to the CBOR Protocol author to determined.
+There are two methods presented.  Which one is to be used is up to the CBOR Protocol author to determine.
 Both use CBOR Tags in a way that results in a deterministic first 8 to 12 bytes.
 
 ## The CBOR Protocol Specific Tag
@@ -230,7 +230,7 @@ If the programs that read the contents of the file already expect to process all
 The program involved may throw errors or warnings on the CBOR Tag Sequence if they have not yet been updated, but this may not be a problem.
 If it is, then consideration should be given to CBOR Tag Wrapped.
 
-If only one item is ever expected in the file, the the use of CBOR Tag Sequence may present an implementation hurdle to programs that previously just read a single value and used it.
+If only one item is ever expected in the file, the use of CBOR Tag Sequence may present an implementation hurdle to programs that previously just read a single value and used it.
 
 ## Are there tags at the start?
 
