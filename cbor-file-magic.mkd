@@ -361,7 +361,7 @@ In order to reduce the problems due to serialization, the serialization is being
 Additionally, this change allows the IPC to be described by CDDL, and for any language that encode to CBOR can be used.
 
 IANA has allocated the tag 1330664270, or 0x4f\_50\_53\_4e for this purpose.
-As a result, each file and each IPC is prefixed a CBOR TAG Sequence.
+As a result, each file and each IPC is prefixed with a CBOR TAG Sequence.
 
 In diagnostic notation:
 
