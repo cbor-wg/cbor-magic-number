@@ -80,7 +80,7 @@ It is noted that in the media type registration, that a magic number is asked fo
 
 A challenge for the file(1) program is often that it can be confused by the encoding vs the content.
 For instance, an Android "apk" used to transfer and store an application may be identified as a ZIP file.
-Additionaly, both OpenOffice or MSOffice files are ZIP files of XML files.
+Additionally, both OpenOffice or MSOffice files are ZIP files of XML files.
 
 As CBOR becomes a more and more common encoding for a wide variety of artifacts, identifying them as just "CBOR" is probably not sufficient.
 This document provides a way to encode a magic number into the beginning of a CBOR format file.
@@ -115,18 +115,22 @@ While the Unix file(1) command can be told to ignore bytes, this can lead to amb
 
 # Protocol
 
-There are two methods presented.  Which one is to be used is up to the CBOR Protocol author to determined.
+There are two methods presented.  Which one is to be used is up to the CBOR Protocol author to determine.
 Both use CBOR Tags in a way that results in a deterministic first 8 to 12 bytes.
 
 ## The CBOR Protocol Specific Tag
 
-CBOR Protocol designers are to obtain a CBOR tag for each major type of object that they might store on disk.
+CBOR Protocol designers need to obtain a CBOR tag for each major type of object that they might store on disk.
 As there are more than 4 billion available 4-byte tags, there should be little issue in allocating a few to each available CBOR Protocol.
 
 The IANA policy for 4-byte CBOR Tags is First Come First Served, so all that is required is an email to IANA, having filled in the small template provided in {{Section 9.2 of RFC8949}}.
 
-This tag is to be allocated by the author of the CBOR Protocol.
-It is to be in the four-byte range, and it is to be at least 0x01000000 (decimal 16777216) in value so that there are no leading zeros.
+This tag needs to be allocated by the author of the CBOR Protocol.
+In order to be in the four-byte range, and so that there are no
+leading zeros, the value needs to be in the range 0x01000000 (decimal
+16777216) to 0xFFFFFFFF (decimal 4294967295).
+It is further suggested to avoid values that have an embedded zero byte in
+the four bytes of their binary representation (e.g., 0x12003456).
 
 The use of a sequence of four US-ASCII codes which are mnemonic to the protocol is encouraged, but not required.
 
@@ -154,7 +158,7 @@ Whether or not to remove the tag is a decision made by the CBOR Protocol specifi
 
 The CBOR Taq Sequence method makes use of CBOR Sequences as described in {{RFC8742}}.
 
-This method consists of two tags and a constant string for a total of 12 bytes.
+This method consists of two tags nested around a constant string for a total of 12 bytes.
 
 1. The file shall start with the Self-described CBOR Sequence tag, 55800.
 2. The file shall continue with a CBOR tag, from the First Come First Served space, which uniquely identifies the CBOR Protocol.  The use of a four-byte tag is encouraged.
@@ -197,7 +201,7 @@ Programs which might not expect the CBOR Tag Sequence, but which would operate w
 
 As an example of where there was a problem with previous security systems, "PEM" format certificate files grew to be able to contain multiple certificates by simple concatenation.
 The PKCS1 format could also contain a private key object followed by a one or more certificate  objects: but only when in PEM format.
-Perversely, when in binary DER format (which like CBOR is self-limiting), concatenation of certificates was not compatible with most programs as they did not expect to read more than one item in the file.
+Annoyingly, when in binary DER format (which like CBOR is self-delimiting), concatenation of certificates was not compatible with most programs as they did not expect to read more than one item in the file.
 
 The use of CBOR Tag Wrapped format is easier to retrofit to an existing format with existing and unchangeable on-disk format.
 This new sequence of tags are expected to be trivially ignored by an
@@ -230,7 +234,7 @@ If the programs that read the contents of the file already expect to process all
 The program involved may throw errors or warnings on the CBOR Tag Sequence if they have not yet been updated, but this may not be a problem.
 If it is, then consideration should be given to CBOR Tag Wrapped.
 
-If only one item is ever expected in the file, the the use of CBOR Tag Sequence may present an implementation hurdle to programs that previously just read a single value and used it.
+If only one item is ever expected in the file, the use of CBOR Tag Sequence may present an implementation hurdle to programs that previously just read a single value and used it.
 
 ## Are there tags at the start?
 
@@ -361,7 +365,7 @@ In order to reduce the problems due to serialization, the serialization is being
 Additionally, this change allows the IPC to be described by CDDL, and for any language that encode to CBOR can be used.
 
 IANA has allocated the tag 1330664270, or 0x4f\_50\_53\_4e for this purpose.
-As a result, each file and each IPC is prefixed a CBOR TAG Sequence.
+As a result, each file and each IPC is prefixed with a CBOR TAG Sequence.
 
 In diagnostic notation:
 
