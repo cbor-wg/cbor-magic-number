@@ -137,7 +137,7 @@ The use of a sequence of four US-ASCII codes which are mnemonic to the protocol 
 
 For CBOR byte strings that happen to contain a representation that is
 described by a CoAP Content-Format Number ({{Section 12.3 of -coap}},
-Subregistry
+Registry
 {{Content-Formats<IANA.core-parameters}}{:relative="#content-formats"}
 of {{IANA.core-parameters}}),
 a tag number has already been allocated in {{iana-ct-tags}} (see {{ct-tags}}
@@ -318,7 +318,7 @@ format NNNNNNNN-1668546560.
 
 ## Content-Format Tag Examples
 
-Subregistry {{Content-Formats<IANA.core-parameters}}{:relative="#content-formats"} of {{IANA.core-parameters}} defines content formats that can be used as examples:
+Registry {{Content-Formats<IANA.core-parameters}}{:relative="#content-formats"} of {{IANA.core-parameters}} defines content formats that can be used as examples:
 
 * Content-Format 432 stands for media type application/td+json (no
   parameters).
