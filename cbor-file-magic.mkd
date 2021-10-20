@@ -377,7 +377,10 @@ In diagnostic notation:
 Or in hex:
 
 ~~~~
-00000000  d9 d9 f8 da 4f 50 53 4e  43 42 4f 52         |....OPSNCBOR|
+D9 D9F8         # tag(55800)
+   DA 4F50534E  # tag(1330664270)
+      43        # bytes(3)
+         424F52 # "BOR"
 ~~~~
 
 
