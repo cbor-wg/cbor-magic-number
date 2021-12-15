@@ -1,7 +1,7 @@
 ---
 title: On storing CBOR encoded items on stable storage
 abbrev: cbor-file-magic
-docname: draft-ietf-cbor-file-magic-07pre
+docname: draft-ietf-cbor-file-magic-07
 
 stand_alone: true
 
@@ -67,7 +67,7 @@ Since very early in computing, operating systems have sought ways to mark which 
 For instance, the Unix file(1) command, which has existed since 1973 {{file}}, has been able to identify many file formats for decades based upon the contents of the file.
 
 Many systems (Linux, macOS, Windows) will select the correct application based upon the file contents, if the system can not determine it by other means. For instance,
-starting in Mac OS, a resource fork was maintained that includes media type ("MIME type") information and therefore ideally never needs to know anything about the file.
+starting in MacOS, a resource fork was maintained that includes media type ("MIME type") information and therefore ideally never needs to know anything about the file.
 
 But, many other systems do this by file extensions.
 Many common web servers derive the MIME-type information from file extensions.
@@ -228,13 +228,13 @@ For example: a private key used in COSE operations, a public key/certificate in 
 
 Both the CBOR Tag Sequence and the wrapped tag can be trivially removed by an application before sending the CBOR content out on the wire.
 
-The CBOR Tag Sequence is a little bit easier to remove as in most cases, CBOR parsers will return it as a unit, and then return the actual CBOR item, which could be anything at all, and could include CBOR tags that *do* need to be sent on wire.
+The CBOR Tag Sequence can be slightly easier to remove as in most cases, CBOR parsers will return it as a unit, and then return the actual CBOR item, which could be anything at all, and could include CBOR tags that *do* need to be sent on wire.
 
-On the other hand, having the CBOR Tag Sequence in the file requires that all programs that expect to examine that file are able to skip what appears to be a CBOR item with two tags nested around a three-byte byte string..
+On the other hand, having the CBOR Tag Sequence in the file requires that all programs that expect to examine that file are able to skip what appears to be a CBOR item with two tags nested around a three-byte byte string.
 Programs which might not expect the CBOR Tag Sequence, but which would operate without a problem would include any program that expects to process CBOR Sequences from the file.
 
 As an example of where there was a problem with previous security systems, "PEM" format certificate files grew to be able to contain multiple certificates by simple concatenation.
-The PKCS1 format could also contain a private key object followed by a one or more certificate  objects: but only when in PEM format.
+The PKCS1 format could also contain a private key object followed by a one or more certificate objects: but only when in PEM format.
 Annoyingly, when in binary DER format (which like CBOR is self-delimiting), concatenation of certificates was not compatible with most programs as they did not expect to read more than one item in the file.
 
 The use of CBOR Tag Wrapped format is easier to retrofit to an existing format with existing and unchangeable on-disk format for a single CBOR data item.
