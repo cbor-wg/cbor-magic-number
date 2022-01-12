@@ -63,11 +63,14 @@ is friendly to common on-disk recognition systems such as the Unix file(1) comma
 # Introduction
 
 Since very early in computing, operating systems have sought ways to mark which files could be processed by which programs.
+At one point, files were all record orientated and the operating system enforced this.
+That changed with Unix, when everything became a stream of bytes, and it is likely that this approach also facilitated the TCP/IP socket model where all network connectivity is a stream of bytes.
 
+Identifying the contents of a stream of bytes became a heuristic activity.
 For instance, the Unix file(1) command, which has existed since 1973 {{file}}, has been able to identify many file formats for decades based upon the contents of the file.
 
-Many systems (Linux, macOS, Windows) will select the correct application based upon the file contents, if the system can not determine it by other means. For instance,
-starting in MacOS, a resource fork was maintained that includes media type ("MIME type") information and therefore ideally never needs to know anything about the file.
+Many systems (Linux, macOS, Windows) will select the correct application based upon the file contents, if the system can not determine it by other means.
+For instance, starting in MacOS, a resource fork was maintained that includes media type ("MIME type") information and therefore ideally never needs to know anything about the file.
 
 But, many other systems do this by file extensions.
 Many common web servers derive the MIME-type information from file extensions.
@@ -78,12 +81,18 @@ It is noted that in the media type registration, that a magic number is asked fo
 
 A challenge for the file(1) program is often that it can be confused by the encoding vs the content.
 For instance, an Android "apk" used to transfer and store an application may be identified as a ZIP file.
-Additionally, both OpenOffice and MSOffice files are ZIP files of XML files.
+Additionally, both OpenOffice and MSOffice files are ZIP files of XML files, and may also be identified as a ZIP file.
 
 As CBOR becomes a more and more common encoding for a wide variety of artifacts, identifying them as just "CBOR" is probably not sufficient.
 This document provides a way to encode a magic number into the beginning of a CBOR format file.
 Two possible methods of enveloping data are presented: a CBOR Protocol author will specify one.
 (A CBOR Protocol is a specification which uses CBOR as its encoding.)
+
+A third method is also proposed by which this CBOR format prepended tag is used to identify non-CBOR files.
+This third method has been placed in an appendix because it is not really about CBOR.
+
+This entire document is a Best Current Practice: it gives advice to designers of CBOR protocols on identifying their contents.
+This entire document is therefore informative, but the {{headers}} appendix is even more informative .
 
 Examples of CBOR Protocols currently under development include CoSWID {{?I-D.ietf-sacm-coswid}}, and EAT {{?I-D.ietf-rats-eat}}.
 COSE itself {{?RFC8152}} is considered infrastructure, however the encoding of public keys in CBOR as described in {{?I-D.ietf-cose-cbor-encoded-cert}} would be an identified CBOR Protocol as well.
@@ -95,6 +104,7 @@ While these envelopes add information to how data conforming to CBOR Protocols a
 In addition to the on-disk identification aspects, there are some protocols which may benefit from having such a magic number on the wire if they are presently using a different (legacy) encoding scheme.
 The presence of the identifiable magic sequence signals that CBOR is
 being used as opposed to a legacy scheme.
+
 In addition, for convenience, {{headers}} defines a simple way to
 retroactively add a magic number to content-formats as defined by
 {{-coap}}, even if not in CBOR form.
