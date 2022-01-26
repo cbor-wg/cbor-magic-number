@@ -63,8 +63,6 @@ is friendly to common on-disk recognition systems such as the Unix file(1) comma
 # Introduction
 
 Since very early in computing, operating systems have sought ways to mark which files could be processed by which programs.
-At one point, files were all record orientated and the operating system enforced this.
-That changed with Unix, when everything became a stream of bytes, and it is likely that this approach also facilitated the TCP/IP socket model where all network connectivity is a stream of bytes.
 
 Identifying the contents of a stream of bytes became a heuristic activity.
 For instance, the Unix file(1) command, which has existed since 1973 {{file}}, has been able to identify many file formats for decades based upon the contents of the file.
