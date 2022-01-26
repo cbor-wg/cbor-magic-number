@@ -9,7 +9,7 @@ ipr: trust200902
 area: Internet
 wg: CBOR Working Group
 kw: Internet-Draft
-cat: bcp
+cat: std
 consensus: true
 
 pi:    # can use array (if all yes) or hash here
