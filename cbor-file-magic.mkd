@@ -63,8 +63,10 @@ is friendly to common on-disk recognition systems such as the Unix file(1) comma
 # Introduction
 
 Since very early in computing, operating systems have sought ways to mark which files could be processed by which programs.
+In Unix, everything is a stream of bytes (related to the TCP/IP
+socket model, where all network connectivity also is a stream of
+bytes); identifying the contents of a stream of bytes became a heuristic activity.
 
-Identifying the contents of a stream of bytes became a heuristic activity.
 For instance, the Unix file(1) command, which has existed since 1973 {{file}}, has been able to identify many file formats for decades based upon the contents of the file.
 
 Many systems (Linux, macOS, Windows) will select the correct application based upon the file contents, if the system can not determine it by other means.
