@@ -142,7 +142,7 @@ Both use CBOR Tags in a way that results in a deterministic first 8 to 12 bytes.
 ## The CBOR Protocol Specific Tag
 
 In both enveloping methods,
-CBOR Protocol designers need to obtain a CBOR tag for each major type of object that they might store on disk.
+CBOR Protocol designers need to obtain a CBOR tag for each kind of object that they might store on disk.
 As there are more than 4 billion available 4-byte tags, there should be little issue in allocating a few to each available CBOR Protocol.
 
 The IANA policy for 4-byte CBOR Tags is First Come First Served, so all that is required is an email to IANA, having filled in the small template provided in {{Section 9.2 of RFC8949}}.
@@ -285,7 +285,20 @@ If the eight bytes are a problem on the wire (and they often are if CBOR is bein
 If the programs that read the contents of the file already expect to process all of the CBOR data items in the file (not just the first), then the CBOR Tag Sequence format may be easily retrofitted.
 
 The program involved may throw errors or warnings on the CBOR Tag Sequence if they have not yet been updated, but this may not be a problem.
-If it is, then consideration should be given to CBOR Tag Wrapped.
+
+There are situations where multiple objects may be concatenated into a single file.
+If each object is preceeded by a a CBOR Tag Sequence then there may be multiple Tag Sequences in the file.
+If it is, then consideration should be given to CBOR Tag Wrapped instead.
+
+It is even possible that objects are of different types, and this may be a feature or a bug.
+
+As an example from legacy PEM encoded PKIX certificates, many programs accept a series of PKIX certificates in a single file in order to set up a certificate chain.
+The file would contain not just the End-Entity (EE) certificate, but also any subordinate certification authorities (CA) needed to validate the EE.
+This mechanism actually only works for PEM encoded certificates, and not DER encoded certificates.
+One of the reasons for this specification is to make sure that CBOR encoded certificates do not suffer from this problem.
+
+As an example of mixing of types, some TLS server programs also can accept both their PEM encoded private key, and their PEM encoded certificate in the same file.
+
 
 If only one item is ever expected in the file, the use of CBOR Tag Sequence may present an implementation hurdle to programs that previously just read a single data item and used it.
 
