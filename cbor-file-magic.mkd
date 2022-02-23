@@ -1,7 +1,7 @@
 ---
 title: On storing CBOR encoded items on stable storage
 abbrev: cbor-file-magic
-docname: draft-ietf-cbor-file-magic-08
+docname: draft-ietf-cbor-file-magic-09
 
 stand_alone: true
 
