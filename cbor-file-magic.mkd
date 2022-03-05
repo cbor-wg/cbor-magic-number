@@ -1,11 +1,10 @@
 ---
+v: 3
+
 title: On storing CBOR encoded items on stable storage
 abbrev: cbor-file-magic
 docname: draft-ietf-cbor-file-magic-09
 
-stand_alone: true
-
-ipr: trust200902
 area: Internet
 wg: CBOR Working Group
 kw: Internet-Draft
@@ -13,14 +12,8 @@ cat: std
 consensus: true
 submissiontype: IETF
 
-pi:    # can use array (if all yes) or hash here
-  toc: yes
-  sortrefs:   # defaults to yes
-  symrefs: yes
-
 author:
-- ins: M. Richardson
-  name: Michael Richardson
+- name: Michael Richardson
   org: Sandelman Software Works
   email: mcr+ietf@sandelman.ca
 - name: Carsten Bormann
