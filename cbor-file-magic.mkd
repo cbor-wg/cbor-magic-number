@@ -208,7 +208,7 @@ In other words, the unique fingerprint for `application/senml+cbor` is composed 
 
 ## Enveloping Method: CBOR Tag Sequence {#sequences}
 
-The CBOR Taq Sequence method is appropriate for use with CBOR Sequences as described in {{RFC8742}}.
+The CBOR Tag Sequence method is appropriate for use with CBOR Sequences as described in {{RFC8742}}.
 
 This method prepends a data item to the sequence to be tagged that consists of two tags nested around a constant string for a total of 12 bytes.
 
@@ -287,8 +287,9 @@ If the programs that read the contents of the file already expect to process all
 The program involved may throw errors or warnings on the CBOR Tag Sequence if they have not yet been updated, but this may not be a problem.
 
 There are situations where multiple objects may be concatenated into a single file.
-If each object is preceeded by a a CBOR Tag Sequence then there may be multiple Tag Sequences in the file.
-If it is, then consideration should be given to CBOR Tag Wrapped instead.
+If each object is preceded by a CBOR Tag Sequence then there may be
+multiple CBOR Tag Sequences in the file.
+???If it is, then consideration should be given to CBOR Tag Wrapped instead.???
 
 It is even possible that objects are of different types, and this may be a feature or a bug.
 
