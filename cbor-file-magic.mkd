@@ -401,15 +401,12 @@ Reference:
 
 # CBOR Tags for CoAP Content Formats {#ct-tags}
 
-Often, there is a need to identify a media type (or content type,
-i.e., media type optionally used with parameters) that applies to the
-contents of a
-byte string in a CBOR data item.
-
 {{Section 5.10.3 of -coap}} defines the concept of a Content-Format,
 which is a short 16-bit unsigned integer that identifies a specific
 content type (media type plus optionally parameters), optionally
 together with a content encoding.
+
+Outside of a CoAP transfer it may be necessary to identify the contents of the CoAP payload when it is on disk, in firmware, or when debugging.
 
 This specification allocates CBOR tag numbers 1668546560 (0x63740000) to
 1668612095 (0x6374FFFF) for the tagging of representations of specific
