@@ -410,7 +410,7 @@ which is a short 16-bit unsigned integer that identifies a specific
 content type (media type plus optionally parameters), optionally
 together with a content encoding.
 
-Outside of a CoAP transfer it may be necessary to identify the contents of the CoAP payload when it is on disk, in firmware, or when debugging.
+Outside of a transfer protocol that indicates the Content-Format for a representation, it may be necessary to identify the Content-Format of the representation when it is on disk, in firmware, or when debugging.
 
 This specification allocates CBOR tag numbers 1668546560 (0x63740000) to
 1668612095 (0x6374FFFF) for the tagging of representations of specific
