@@ -42,6 +42,7 @@ informative:
   RFC8610:
   RFC7252: coap
   IANA.core-parameters:
+  IANA.cbor-tags:
 
 venue:
   mail: cbor@ietf.org
@@ -323,6 +324,9 @@ Clearly identifying CBOR contents on disk may have a variety of impacts.
 The most obvious is that it may allow malware to identify interesting objects on disk, and then exfiltrate or corrupt them.
 
 # IANA Considerations
+
+These IANA considerations are entirely about CBOR Tags, in the
+registry {{cbor-tags (CBOR Tags)<IANA.cbor-tags}} of {{IANA.cbor-tags}}.
 
 {{cbor-sequence-tag}} documents the allocation that was done for a
 CBOR tag to be used in a CBOR sequence to identify the sequence (an
