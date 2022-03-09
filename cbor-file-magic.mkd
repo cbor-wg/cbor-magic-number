@@ -49,7 +49,7 @@ venue:
 
 --- abstract
 
-This document defines an on-disk format for CBOR objects that
+This document defines an on-disk format for CBOR data items that
 is friendly to common on-disk recognition systems such as the Unix file(1) command.
 
 --- middle
