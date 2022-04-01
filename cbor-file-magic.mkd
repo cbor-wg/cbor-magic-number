@@ -29,8 +29,10 @@ contributor:
     email: jeffpc@josefsipek.net
 
 normative:
-  STD94: cbor
-  RFC8742:
+  STD94:
+    =: RFC8949
+    display: STD94
+  RFC8742: seq
 
 informative:
   file:
@@ -43,6 +45,17 @@ informative:
   RFC7252: coap
   IANA.core-parameters:
   IANA.cbor-tags:
+  RFC8017: pkcs1
+  X.690:
+    title: 'Information technology - ASN.1 encoding rules: Specification of Basic
+      Encoding Rules (BER), Canonical Encoding Rules (CER) and Distinguished Encoding
+      Rules (DER)'
+    author:
+    - org: ITU-T
+    date: 2021-02
+    seriesinfo:
+      ITU-T Recommendation: X.690
+      ISO/IEC: 8825-1
 
 venue:
   mail: cbor@ietf.org
@@ -115,7 +128,7 @@ Byte is a synonym for octet.
 The term "byte string" refers to the data item defined in {{STD94}}.
 
 The term "diagnostic notation" refers to the human-readable notation
-for CBOR data items defined in {{Section 8 of RFC8949}} and {{Section G of RFC8610}}.
+for CBOR data items defined in {{Section 8 of STD94}} and {{Section G of RFC8610}}.
 
 The term CDDL (Concise Data Definition Language) refers to the
 language defined in {{RFC8610}}.
@@ -139,7 +152,7 @@ In both enveloping methods,
 CBOR Protocol designers need to obtain a CBOR tag for each kind of object that they might store on disk.
 As there are more than 4 billion available 4-byte tags, there should be little issue in allocating a few to each available CBOR Protocol.
 
-The IANA policy for 4-byte CBOR Tags is First Come First Served, so all that is required is an email to IANA, having filled in the small template provided in {{Section 9.2 of RFC8949}}.
+The IANA policy for 4-byte CBOR Tags is First Come First Served, so all that is required is an email to IANA, having filled in the small template provided in {{Section 9.2 of STD94}}.
 
 This tag needs to be allocated by the author of the CBOR Protocol.
 In order to be in the four-byte range, and so that there are no
@@ -164,7 +177,7 @@ The CBOR Tag Wrapped method is appropriate for use with CBOR protocols that enco
 This data item is enveloped into two nested tags:
 
 The outer tag is a Self-described CBOR tag, 55799, as
-described in {{Section 3.4.6 of RFC8949}}.
+described in {{Section 3.4.6 of STD94}}.
 
 The tag content of that tag is a second CBOR Tag that has been allocated to describe the specific Protocol involved, as described above.
 
@@ -220,7 +233,7 @@ As with CBOR Tag Wrapped, the use of a four-byte tag is encouraged that encodes 
    0x42\_4F\_52 ('BOR' in diagnostic notation).
 
 The outer tag in the label identifies the file as being a CBOR Sequence, and does so with all
-the desirable properties explained in {{Section 3.4.6 of RFC8949}}.
+the desirable properties explained in {{Section 3.4.6 of STD94}}.
 Specifically, it does not appear to conflict with any known file types, and it is not valid Unicode in any Unicode encoding.
 
 The inner tag in the label identifies which CBOR Protocol is used, as described above.
@@ -255,8 +268,9 @@ On the other hand, having the Labeled CBOR Sequence in the file requires that al
 Programs which might not expect the Labeled CBOR Sequence, but which would operate without a problem would include any program that expects to process CBOR Sequences from the file.
 
 As an example of where there was a problem with previous security systems, "PEM" format certificate files grew to be able to contain multiple certificates by simple concatenation.
-The PKCS1 format could also contain a private key object followed by a one or more certificate objects: but only when in PEM format.
-Annoyingly, when in binary DER format (which like CBOR is self-delimiting), concatenation of certificates was not compatible with most programs as they did not expect to read more than one item in the file.
+<!-- Note that PKCS1 is not an abbreviation any more in standard usage. -->
+The PKCS1 format {{-pkcs1}} could also contain a private key object followed by a one or more certificate objects: but only when in PEM format.
+Annoyingly, when in binary DER format ({{X.690}}, which like CBOR is self-delimiting), concatenation of certificates was not compatible with most programs as they did not expect to read more than one item in the file.
 
 The use of CBOR Tag Wrapped format is easier to retrofit to an existing format with existing and unchangeable on-disk format for a single CBOR data item.
 This new sequence of tags is expected to be trivially ignored by many
@@ -341,14 +355,14 @@ Enveloping Method.
 
 This tag is from the First Come/First Served area.
 
-The value has been picked to have properties similar to the 55799 tag ({{Section 3.4.6 of RFC8949}}).
+The value has been picked to have properties similar to the 55799 tag ({{Section 3.4.6 of STD94}}).
 
 The hexadecimal representation of the encoded tag head is: 0xd9\_d9\_f8.
 
 This is not valid UTF-8: the first 0xd9 introduces a three-byte sequence in UTF-8, but the 0xd9 as the second value is not a valid second byte for UTF-8.
 
 This is not valid UTF-16: the byte sequence 0xd9d9 (in either endian order) puts this value into the UTF-16 high-half zone, which would signal that this a 32-bit Unicode value.  However, the following 16-bit big-endian value 0xf8.. is not a valid second sequence according to {{?RFC2781}}.
-On a little-endian system, it would be necessary to examine the fourth byte to determine if it is valid.  That next byte is determined by the subsequent encoding, and {{Section 3.4.6 of RFC8949}} has already determined that no valid CBOR encodings result in valid UTF-16.
+On a little-endian system, it would be necessary to examine the fourth byte to determine if it is valid.  That next byte is determined by the subsequent encoding, and {{Section 3.4.6 of STD94}} has already determined that no valid CBOR encodings result in valid UTF-16.
 
 {: newline="true"}
 Data Item:
@@ -366,14 +380,14 @@ Enveloping Method ({{headers}}).
 
 This tag is from the First Come/First Served area.
 
-The value has been picked to have properties similar to the 55799 tag ({{Section 3.4.6 of RFC8949}}).
+The value has been picked to have properties similar to the 55799 tag ({{Section 3.4.6 of STD94}}).
 
 The hexadecimal representation of the encoded tag head is: 0xd9\_d9\_f9.
 
 This is not valid UTF-8: the first 0xd9 introduces a three-byte sequence in UTF-8, but the 0xd9 as the second value is not a valid second byte for UTF-8.
 
 This is not valid UTF-16: the byte sequence 0xd9d9 (in either endian order) puts this value into the UTF-16 high-half zone, which would signal that this a 32-bit Unicode value.  However, the following 16-bit big-endian value 0xf9.. is not a valid second sequence according to {{?RFC2781}}.
-On a little-endian system, it would be necessary to examine the fourth byte to determine if it is valid.  That next byte is determined by the subsequent encoding, and {{Section 3.4.6 of RFC8949}} has already determined that no valid CBOR encodings result in valid UTF-16.
+On a little-endian system, it would be necessary to examine the fourth byte to determine if it is valid.  That next byte is determined by the subsequent encoding, and {{Section 3.4.6 of STD94}} has already determined that no valid CBOR encodings result in valid UTF-16.
 
 {: newline="true"}
 Data Item:
@@ -524,7 +538,7 @@ As with CBOR Tag Wrapped, the use of a four-byte tag is encouraged that encodes 
 
 The outer tag in the label identifies the file as being file as being prefixed by a non-CBOR
 data label, and does so with all
-the desirable properties explained in {{Section 3.4.6 of RFC8949}}.
+the desirable properties explained in {{Section 3.4.6 of STD94}}.
 Specifically, it does not appear to conflict with any known file types, and it is not valid Unicode in any Unicode encoding.
 
 The inner tag in the label identifies which non-CBOR Protocol is used.
