@@ -98,7 +98,7 @@ As CBOR becomes a more and more common encoding for a wide variety of artifacts,
 This document provides a way to encode a magic number into the beginning of a CBOR format file.
 As a CBOR format may use a single CBOR data item or a CBOR sequence of
 data items {{-seq}},
-two possible methods of enveloping data are presented: a CBOR Protocol author will specify one.
+two possible methods of enveloping data are presented: a CBOR Protocol designer will specify one.
 (A CBOR Protocol is a specification which uses CBOR as its encoding.)
 
 A third method is also proposed by which this CBOR format prepended tag is used to identify non-CBOR files.
@@ -148,7 +148,7 @@ While the Unix file(1) command can be told to ignore certain bytes, this can lea
 
 # Protocol
 
-This Section presents two enveloping methods.  Which one is to be used is up to the CBOR Protocol author to determine.
+This Section presents two enveloping methods.  Which one is to be used is up to the CBOR Protocol designer to determine.
 Both use CBOR Tags in a way that results in a deterministic first 8 to 12 bytes.
 
 ## The CBOR Protocol Specific Tag
@@ -256,7 +256,7 @@ Should this file be reviewed by a human (directly in an
 editor, or in a hexdump display), it will include the ASCII characters "CBOR" prominently.
 This value is also included simply because the inner nested tag needs to tag something.
 
-# Advice to Protocol Developers
+# Advice to Protocol Designer
 
 This document introduces a choice between wrapping a single CBOR data item into a (pair of) identifying CBOR tags, or prepending an identifying encoded CBOR data item (which in turn contains a pair of identifying CBOR tags) to a CBOR Sequence (which might be single data item).
 
