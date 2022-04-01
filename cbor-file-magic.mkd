@@ -81,13 +81,13 @@ Many systems (Linux, macOS, Windows) will select the correct application based u
 For instance, in classical MacOS, a resource fork was maintained that includes media type ("MIME type") information and therefore ideally never needs to know anything about the file.
 
 But, many other systems do this by file extensions.
-Many common web servers derive the MIME-type information from file extensions.
+Many common web servers derive the media-type information from file extensions.
 
 Having a media type associated with the file is a better solution in
 general.
 When files become disconnected from their type information, such as when attempting to do forensics on a damaged system, then being able to identify a file type can become very important.
 
-It is noted that in the media type registration, that a magic number is asked for, if available, as is a file extension.
+It is noted that in the media type registration template, a magic number is asked for, if available, as is a file extension.
 
 A challenge for the file(1) program is often that it can be confused by the encoding vs the content.
 For instance, an Android "apk" used to transfer and store an application may be identified as a ZIP file.
@@ -95,7 +95,9 @@ Additionally, both OpenOffice and MSOffice files are ZIP files of XML files, and
 
 As CBOR becomes a more and more common encoding for a wide variety of artifacts, identifying them as just "CBOR" is probably not sufficient.
 This document provides a way to encode a magic number into the beginning of a CBOR format file.
-Two possible methods of enveloping data are presented: a CBOR Protocol author will specify one.
+As a CBOR format may use a single CBOR data item or a CBOR sequence of
+data items {{-seq}},
+two possible methods of enveloping data are presented: a CBOR Protocol author will specify one.
 (A CBOR Protocol is a specification which uses CBOR as its encoding.)
 
 A third method is also proposed by which this CBOR format prepended tag is used to identify non-CBOR files.
@@ -106,10 +108,12 @@ This document also gives advice to designers of CBOR protocols on
 choosing one of these mechanisms for identifying their contents.
 This advice is informative.
 
-Examples of CBOR Protocols currently under development include CoSWID {{?I-D.ietf-sacm-coswid}} and EAT {{?I-D.ietf-rats-eat}}.
+Examples of CBOR Protocols currently under development include Concise
+Software Identification Tags (CoSWID, {{?I-D.ietf-sacm-coswid}}) and
+Entity Attestation Tokens (EAT, {{?I-D.ietf-rats-eat}}).
 COSE itself {{?RFC8152}} is considered infrastructure, however the encoding of public keys in CBOR as described in {{?I-D.ietf-cose-cbor-encoded-cert}} would be an identified CBOR Protocol as well.
 
-A major inspiration for this document is observing the mess in certain
+A major inspiration for this document is observing the disarray in certain
 ASN.1 based systems where most files are PEM encoded; these are then all identified by the extension "pem", confusing public keys, private keys, certificate requests, and S/MIME content.
 
 While the envelopes defined in this specification add information to how data conforming to CBOR Protocols are stored in files, there is no requirement that either type of envelope be transferred on the wire.
