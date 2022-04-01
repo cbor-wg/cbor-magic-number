@@ -163,7 +163,8 @@ In order to be in the four-byte range, and so that there are no
 leading zeros, the value needs to be in the range 0x01000000 (decimal
 16777216) to 0xFFFFFFFF (decimal 4294967295).
 It is further suggested to avoid values that have an embedded zero byte in
-the four bytes of their binary representation (such as 0x12003456).
+the four bytes of their binary representation (such as 0x12003456), as
+these may confuse implementations that treat the magic number as a C string.
 
 The use of a sequence of four US-ASCII codes which are mnemonic to the protocol is encouraged, but not required.
 
