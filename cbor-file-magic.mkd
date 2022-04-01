@@ -46,6 +46,7 @@ informative:
   IANA.core-parameters:
   IANA.cbor-tags:
   RFC8017: pkcs1
+  RFC9177: new-block
   X.690:
     title: 'Information technology - ASN.1 encoding rules: Specification of Basic
       Encoding Rules (BER), Canonical Encoding Rules (CER) and Distinguished Encoding
@@ -476,7 +477,7 @@ Registry {{content-formats (Content-Formats)<IANA.core-parameters}} of {{IANA.co
 
 * Content-Format 272 stands for media type
   application/missing-blocks+cbor-seq, a CBOR sequence
-  {{?I-D.ietf-core-new-block}}.
+  {{-new-block}}.
 
   The corresponding tag number is 1668546832 (i.e., 1668546560+272).
 
