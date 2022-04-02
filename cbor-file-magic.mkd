@@ -158,6 +158,15 @@ CBOR Protocol designers need to obtain a CBOR tag for each kind of object that t
 As there are more than 4 billion available 4-byte tags, there should be little issue in allocating a few to each available CBOR Protocol.
 
 The IANA policy for 4-byte CBOR Tags is First Come First Served, so all that is required is an email to IANA, having filled in the small template provided in {{Section 9.2 of STD94}}.
+In the template, it is suggested to include a reference to this
+specification (RFC XXXX) alongside the Description of
+semantics. [^XXXX]
+
+[^XXXX]: (Note to RFC Editor: Please replace all occurrences of "RFC
+    XXXX" with the RFC number of the present specification and remove
+    this note.)
+
+
 
 This tag needs to be allocated by the author of the CBOR Protocol.
 In order to be in the four-byte range, and so that there are no
