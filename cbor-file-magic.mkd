@@ -74,7 +74,7 @@ Having a media type associated with the file is a better solution in
 general.
 When files become disconnected from their type information, such as when attempting to do forensics on a damaged system, then being able to identify a file type can become very important.
 
-It is noted that in the media type registration, that a magic number is asked for, if available, as is a file extension.
+It is noted in the media type registration, that a magic number is asked for, if available, as is a file extension.
 
 A challenge for the file(1) program is often that it can be confused by the encoding vs the content.
 For instance, an Android "apk" used to transfer and store an application may be identified as a ZIP file.
