@@ -83,6 +83,7 @@ Additionally, both OpenOffice and MSOffice files are ZIP files of XML files, and
 As CBOR becomes a more and more common encoding for a wide variety of artifacts, identifying them as just "CBOR" is probably not sufficient.
 This document provides a way to encode a magic number into the beginning of a CBOR format file.
 Two possible methods of enveloping data are presented: a CBOR Protocol author will specify one.
+The mechanisms provide for tagging a single CBOR data item or a sequence of CBOR items.
 (A CBOR Protocol is a specification which uses CBOR as its encoding.)
 
 A third method is also proposed by which this CBOR format prepended tag is used to identify non-CBOR files.
