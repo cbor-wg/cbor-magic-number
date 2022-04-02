@@ -194,7 +194,7 @@ Whether these two tags should be removed for specific further processing is a de
 
 ### Example {#tag-wrap-example}
 
-To construct an example without registering a new tag, we use the technique described in {{ct-tags}} to translate the Content-Format number registered for `application/senml+cbor`, the number 112, into the tag 1668546560+112 = 1668546672.
+To construct an example without registering a new tag, we use the technique described in {{ct-tags}} to translate the Content-Format number registered for `application/senml+cbor` (as per Registry {{content-formats (Content-Formats)<IANA.core-parameters}} of {{IANA.core-parameters}}), the number 112, into the tag 1668546560+112 = 1668546672.
 
 With this tag, the SenML-CBOR pack `[{0: "current", 6: 3, 2: 1.5}]` would be enveloped as (in diagnostic notation):
 
