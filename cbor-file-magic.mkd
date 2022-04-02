@@ -242,7 +242,7 @@ Should this file be reviewed by a human (directly in an
 editor, or in a hexdump display), it will include the ASCII characters "CBOR" prominently.
 This value is also included simply because the inner nested tag needs to tag something.
 
-# Advice to Protocol Developers
+# Advice to Protocol Authors
 
 This document introduces a choice between wrapping a single CBOR data item into a (pair of) identifying CBOR tags, or prepending an identifying encoded CBOR data item (which in turn contains a pair of identifying CBOR tags) to a CBOR Sequence (which might be single data item).
 
