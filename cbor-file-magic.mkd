@@ -142,12 +142,15 @@ As there are more than 4 billion available 4-byte tags, there should be little i
 
 The IANA policy for 4-byte CBOR Tags is First Come First Served, so all that is required is an email to IANA, having filled in the small template provided in {{Section 9.2 of STD94}}.
 
+When making the IANA request, a reference to this specification will help the reviewer to understand why the specific tag value and size is being requested.
+
 This tag needs to be allocated by the author of the CBOR Protocol.
 In order to be in the four-byte range, and so that there are no
 leading zeros, the value needs to be in the range 0x01000000 (decimal
 16777216) to 0xFFFFFFFF (decimal 4294967295).
 It is further suggested to avoid values that have an embedded zero byte in
 the four bytes of their binary representation (such as 0x12003456).
+This suggestion avoids potential issues with null terminated strings in C.
 
 The use of a sequence of four US-ASCII codes which are mnemonic to the protocol is encouraged, but not required.
 
