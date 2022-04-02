@@ -176,6 +176,7 @@ This method wraps the CBOR value as tags usually do.
 Applications that need to send the CBOR value across a constrained link may wish to remove the two tags if the use is implicitly understood.
 
 Whether these two tags should be removed for specific further processing is a decision made by the CBOR Protocol specification.
+Whenever bytes transmitted over the wire are at a premium, the tags should be removed.
 
 ### Example {#tag-wrap-example}
 
