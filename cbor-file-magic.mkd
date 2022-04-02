@@ -405,10 +405,13 @@ Data Item:
 <!-- Er, hmm. -->
 
 Semantics:
-: for each tag number NNNNNNNN, the representation of content-format (RFC7252) NNNNNNNN-1668546560
+: for each tag number NNNNNNNN, the representation of content-format NNNNNNNN-1668546560
 
 Reference:
 : RFCthis
+
+{{RFC7252}} has defined the Content-Format registry, which is present at:
+  https://www.iana.org/assignments/core-parameters/core-parameters.xhtml#content-formats
 
 
 --- back
