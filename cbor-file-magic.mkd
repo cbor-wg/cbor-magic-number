@@ -68,7 +68,7 @@ Many systems (Linux, macOS, Windows) will select the correct application based u
 For instance, in classical MacOS, a resource fork was maintained that includes media type ("MIME type") information and therefore ideally never needs to know anything about the file.
 
 But, many other systems do this by file extensions.
-Many common web servers derive the MIME-type information from file extensions.
+Many common web servers derive the media type information from file extensions.
 
 Having a media type associated with the file is a better solution in
 general.
