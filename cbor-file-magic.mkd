@@ -470,7 +470,7 @@ Registry {{content-formats (Content-Formats)<IANA.core-parameters}} of {{IANA.co
 
 * Content-Format 272 stands for media type
   application/missing-blocks+cbor-seq, a CBOR sequence
-  {{?I-D.ietf-core-new-block}}.
+  {{?RFC9177}}.
 
   The corresponding tag number is 1668546832 (i.e., 1668546560+272).
 
