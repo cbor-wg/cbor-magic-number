@@ -373,7 +373,8 @@ potential CoAP Content-Format number (examples are in {{ct-tags}}).
 ## Labeled CBOR Sequence Tag {#cbor-sequence-tag}
 
 IANA has allocated tag 55800 as the tag for the Labeled CBOR Sequence
-Enveloping Method.
+Enveloping Method from the CBOR Tags Registry.
+IANA is asked to update this tag registration to point to this document.
 
 This tag is from the First Come/First Served area.
 
@@ -398,7 +399,8 @@ Semantics:
 ## CBOR-Labeled Non-CBOR Data Tag
 
 IANA is requested to allocate tag 55801 as the tag for the CBOR-Labeled Non-CBOR Data
-Enveloping Method ({{headers}}).
+Enveloping Method ({{headers}}) from the CBOR Tags Registry.
+IANA is asked to update this tag registration to point to this document.
 
 This tag is from the First Come/First Served area.
 
