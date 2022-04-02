@@ -95,7 +95,7 @@ choosing one of these mechanisms for identifying their contents.
 This advice is informative.
 
 Examples of CBOR Protocols currently under development include Constrained SoftWare IDentities (CoSWID {{?I-D.ietf-sacm-coswid}} and EAT {{?I-D.ietf-rats-eat}}).
-Constrained Object Signing and Encryption (COSE) itself {{?RFC8152}} is considered infrastructure, however the encoding of public keys in CBOR as described in {{?I-D.ietf-cose-cbor-encoded-cert}} would be an identified CBOR Protocol as well.
+Constrained Object Signing and Encryption (COSE) itself {{?RFC8152}} is considered infrastructure. The encoding of public keys in CBOR as described as _C509_ in {{?I-D.ietf-cose-cbor-encoded-cert}} would benefit from being an identified CBOR Protocol.
 
 A major inspiration for this document is observing the confusion in certain
 ASN.1 based systems where most files are PEM encoded; these are then all identified by the extension "pem", confusing public keys, private keys, certificate requests, and S/MIME content.
@@ -250,18 +250,20 @@ Which should a protocol designer use?
 
 In this discussion, one assumes that there is an object stored in a file, perhaps specified by a system operator in a configuration file.
 
-For example: a private key used in COSE operations, a public key/certificate in C509 or CBOR format, a recorded sensor reading stored for later transmission, or a COVID vaccination certificate that needs to be displayed in QR code form.
+For example: a private key used in COSE operations, a public key/certificate in C509 ({{?I-D.ietf-cose-cbor-encoded-cert}}) or CBOR format, a recorded sensor reading stored for later transmission, or a COVID vaccination certificate that needs to be displayed in QR code form.
 
 Both the Labeled CBOR Sequence and the wrapped tag can be trivially removed by an application before sending the CBOR content out on the wire.
 
 The Labeled CBOR Sequence can be slightly easier to remove as in most cases, CBOR parsers will return it as a unit, and then return the actual CBOR item, which could be anything at all, and could include CBOR tags that *do* need to be sent on wire.
 
 On the other hand, having the Labeled CBOR Sequence in the file requires that all programs that expect to examine that file are able to skip what appears to be a CBOR item with two tags nested around a three-byte byte string.
-Programs which might not expect the Labeled CBOR Sequence, but which would operate without a problem would include any program that expects to process CBOR Sequences from the file.
+The three byte entry is not of the format the program would normally have processed, so it may be a surprise.
+On the other hand, CBOR parsers are generally tolerant of tags that appear: many of them will process extra tags, making unknown tags available as meta information.
+A program that is not expecting those tags may just ignore those extra tags.
 
-As an example of where there was a problem with previous security systems, "PEM" format certificate files grew to be able to contain multiple certificates by simple concatenation.
+As an example of where there was a problem with previous security systems: the "PEM" format certificate files grew to be able to contain multiple certificates by simple concatenation.
 These PKCS1 format could also contain a private key object followed by a one or more certificate objects: but only when in PEM format.
-Annoyingly, when in binary Distinguished Encoding Rules (DER) format (which like CBOR is self-delimiting), concatenation of certificates was not compatible with most programs as they did not expect to read more than one item in the file.
+Annoyingly, when in binary format (Distinguished Encoding Rules - DER) format, which like CBOR is self-delimiting, concatenation of certificates was not compatible with most programs as they did not expect to read more than one entry in the file.
 
 The use of CBOR Tag Wrapped format is easier to retrofit to an existing format with existing and unchangeable on-disk format for a single CBOR data item.
 This new sequence of tags is expected to be trivially ignored by many
