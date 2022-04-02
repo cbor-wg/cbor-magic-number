@@ -94,10 +94,10 @@ This document also gives advice to designers of CBOR protocols on
 choosing one of these mechanisms for identifying their contents.
 This advice is informative.
 
-Examples of CBOR Protocols currently under development include CoSWID {{?I-D.ietf-sacm-coswid}} and EAT {{?I-D.ietf-rats-eat}}.
-COSE itself {{?RFC8152}} is considered infrastructure, however the encoding of public keys in CBOR as described in {{?I-D.ietf-cose-cbor-encoded-cert}} would be an identified CBOR Protocol as well.
+Examples of CBOR Protocols currently under development include Constrained SoftWare IDentities (CoSWID {{?I-D.ietf-sacm-coswid}} and EAT {{?I-D.ietf-rats-eat}}).
+Constrained Object Signing and Encryption (COSE) itself {{?RFC8152}} is considered infrastructure, however the encoding of public keys in CBOR as described in {{?I-D.ietf-cose-cbor-encoded-cert}} would be an identified CBOR Protocol as well.
 
-A major inspiration for this document is observing the mess in certain
+A major inspiration for this document is observing the confusion in certain
 ASN.1 based systems where most files are PEM encoded; these are then all identified by the extension "pem", confusing public keys, private keys, certificate requests, and S/MIME content.
 
 While the envelopes defined in this specification add information to how data conforming to CBOR Protocols are stored in files, there is no requirement that either type of envelope be transferred on the wire.
@@ -256,8 +256,8 @@ On the other hand, having the Labeled CBOR Sequence in the file requires that al
 Programs which might not expect the Labeled CBOR Sequence, but which would operate without a problem would include any program that expects to process CBOR Sequences from the file.
 
 As an example of where there was a problem with previous security systems, "PEM" format certificate files grew to be able to contain multiple certificates by simple concatenation.
-The PKCS1 format could also contain a private key object followed by a one or more certificate objects: but only when in PEM format.
-Annoyingly, when in binary DER format (which like CBOR is self-delimiting), concatenation of certificates was not compatible with most programs as they did not expect to read more than one item in the file.
+These PKCS1 format could also contain a private key object followed by a one or more certificate objects: but only when in PEM format.
+Annoyingly, when in binary Distinguished Encoding Rules (DER) format (which like CBOR is self-delimiting), concatenation of certificates was not compatible with most programs as they did not expect to read more than one item in the file.
 
 The use of CBOR Tag Wrapped format is easier to retrofit to an existing format with existing and unchangeable on-disk format for a single CBOR data item.
 This new sequence of tags is expected to be trivially ignored by many
