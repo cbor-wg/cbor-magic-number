@@ -346,7 +346,8 @@ If only one item is ever expected in the file, the use of Labeled CBOR Sequence 
 
 ## Are there tags at the start?
 
-If the Protocol expects to use other tags values at the top-level, then it may be easier to explain if the Labeled CBOR Sequence format is used.
+If the Protocol expects to use other tags values at the top-level, then the use
+of the tag wrapped format may be easier to explain in the protocol description.
 
 # Security Considerations
 
