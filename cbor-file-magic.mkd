@@ -190,7 +190,10 @@ The tag content of that tag is a second CBOR Tag that has been allocated to desc
 This method wraps the CBOR value as tags usually do.
 Applications that need to send the CBOR value across a constrained link may wish to remove the two tags if the use is implicitly understood.
 
-Whether these two tags should be removed for specific further processing is a decision made by the CBOR Protocol specification.
+A CBOR Protocol specification may specify the use of two tags only for
+specific cases.  For instance, it might use them when storing the
+representation in a local file or for Web access, but not when using them
+in protocol messages that already provide the necessary context.
 
 ### Example {#tag-wrap-example}
 
