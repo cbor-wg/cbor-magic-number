@@ -438,9 +438,7 @@ Semantics:
 Reference:
 : RFCthis
 
-{{RFC7252}} has defined the Content-Format registry, which is present at:
-  https://www.iana.org/assignments/core-parameters/core-parameters.xhtml#content-formats
-
+The Registry for {{content-formats (Content-Formats)<IANA.core-parameters}} of {{IANA.core-parameters}} has been defined in {{Section 12.3 of RFC7252}}.
 
 --- back
 
