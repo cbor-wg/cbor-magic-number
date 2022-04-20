@@ -64,7 +64,7 @@ venue:
 
 --- abstract
 
-This document defines an stored ("file") format for CBOR data items that
+This document defines a stored ("file") format for CBOR data items that
 is friendly to common file type recognition systems such as the Unix file(1) command.
 
 --- middle
@@ -79,35 +79,40 @@ bytes); identifying the contents of a stream of bytes became a heuristic activit
 For instance, the Unix file(1) command, which has existed since 1973 {{file}}, has for decades been able to identify many file formats based upon the contents of the file.
 
 Many systems (Linux, macOS, Windows) will select the correct application based upon the file contents, if the system can not determine it by other means.
-For instance, in classical MacOS, a resource fork was maintained that includes media type ("MIME type") information and therefore ideally never needs to know anything about the file.
+For instance, in classical MacOS, a resource fork was maintained
+separately from the file data that included file type information;
+this way, the OS ideally never needed to know anything about the file
+data contents to determine the media type.
 
-But, many other systems do this by file extensions.
+Many other systems do this by file extensions.
 Many common web servers derive the media-type information from file extensions.
 
-Having a media type associated with the file is a better solution in
-general.
+Having a media type associated with the file contents can avoid some
+of the brittleness of this approach.
 When files become disconnected from their type information, such as when attempting to do forensics on a damaged system, then being able to identify the type of information that is stored in file can become very important.
 
 It is noted that in the media type registration template, a magic number is asked for, if available, as is a file extension.
 
-A challenge for the file(1) program is often that it can be confused by the encoding vs the content.
-For instance, an Android "apk" used to transfer and store an application may be identified as a ZIP file.
+A challenge for the file(1) program is often that it can be confused by the encoding vs. the content.
+For instance, an Android "apk" (as used to transfer and store an application) may be identified as a ZIP file.
 Additionally, both OpenOffice and MSOffice files are ZIP files of XML files, and may also be identified as a ZIP file.
 
 As CBOR becomes a more and more common encoding for a wide variety of artifacts, identifying them as just "CBOR" is probably not sufficient.
 This document provides a way to encode a magic number into the beginning of a CBOR format file.
 As a CBOR format may use a single CBOR data item or a CBOR sequence of
 data items {{-seq}},
-two possible methods of enveloping data are presented: a CBOR Protocol designer will specify one.
+two possible methods of enveloping data are presented; a CBOR Protocol designer will specify one.
 (A CBOR Protocol is a specification which uses CBOR as its encoding.)
+
+This document also gives advice to designers of CBOR Protocols on
+choosing one of these mechanisms for identifying their contents.
+This advice is informative.
 
 A third method is also proposed by which this CBOR format prepended tag is used to identify non-CBOR files.
 This third method has been placed in {{headers}} because it is not
 about identifying media types containing CBOR-encoded data items.
-
-This document also gives advice to designers of CBOR protocols on
-choosing one of these mechanisms for identifying their contents.
-This advice is informative.
+This includes a simple way to derive a magic number to content-formats
+as defined by {{-coap}}, even if not in CBOR form.
 
 Examples of CBOR Protocols currently under development include Concise
 Software Identification Tags (CoSWID, {{?I-D.ietf-sacm-coswid}}) and
@@ -119,14 +124,9 @@ A major inspiration for this document is observing the disarray in certain
 ASN.1 based systems where most files are PEM encoded; these are then all identified by the extension "pem", confusing public keys, private keys, certificate requests, and S/MIME content.
 
 While the envelopes defined in this specification add information to how data conforming to CBOR Protocols are stored in files, there is no requirement that either type of envelope be transferred on the wire.
-
-In addition to the aspects around identification of data items stored in files or similar units of storage, there are some protocols which may benefit from having such a magic number on the wire if they are presently using a different (legacy) encoding scheme.
-The presence of the identifiable magic sequence signals that CBOR is
-being used as opposed to a legacy scheme.
-
-In addition, for convenience, {{headers}} defines a simple way to
-retroactively add a magic number to content-formats as defined by
-{{-coap}}, even if not in CBOR form.
+However, there are some protocols which may benefit from having such a magic number on the wire if they are presently using a different (legacy) encoding scheme.
+The presence of the identifiable magic sequence can be used to signal
+that a CBOR Protocol is being used as opposed to a legacy scheme.
 
 ## Terminology
 
@@ -192,7 +192,7 @@ described by a CoAP Content-Format Number ({{Section 12.3 of -coap}},
 Registry
 {{content-formats (CoAP Content-Formats)<IANA.core-parameters}}
 of {{IANA.core-parameters}}),
-a tag number has already been allocated in {{iana-ct-tags}} (see {{ct-tags}}
+a tag number has pro-actively been allocated in {{iana-ct-tags}} (see {{ct-tags}}
 for details and examples).
 
 ## Enveloping Method: CBOR Tag Wrapped {#wrapped}
@@ -586,10 +586,9 @@ CBOR representation of the header.
 This allows the application to trivially remove the header item with
 the two nested tags and the byte string.
 
-Should this file be reviewed by a human (directly in an
-editor, or in a hexdump display), it will include the ASCII characters
-"CBOR" prominently to indicate the nature of the header.
-This value is also included simply because the two tags need to tag something.
+As with the Labeled CBOR Sequence {#sequences}, this choice of the tag
+content places the ASCII characters "CBOR" prominently into the
+header.
 
 ## Content-Format Tag Examples {#header-ct-examples}
 
