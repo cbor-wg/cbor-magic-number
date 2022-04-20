@@ -93,7 +93,7 @@ When files become disconnected from their type information, such as when attempt
 
 It is noted that in the media type registration template, a magic number is asked for, if available, as is a file extension.
 
-A challenge for the file(1) program is often that it can be confused by the encoding vs. the content.
+A challenge for the file(1) command is often that it can be confused by the encoding vs. the content.
 For instance, an Android "apk" (as used to transfer and store an application) may be identified as a ZIP file.
 Additionally, both OpenOffice and MSOffice files are ZIP files of XML files, and may also be identified as a ZIP file.
 
@@ -173,9 +173,8 @@ semantics. [^XXXX]
     XXXX" with the RFC number of the present specification and remove
     this note.)
 
-
-
-This tag needs to be allocated by the author of the CBOR Protocol.
+Allocation of the CBOR tag needs to be initiated by the author of the CBOR
+Protocol, who can provide a proposed tag number.
 In order to be in the four-byte range, and so that there are no
 leading zero bytes, the value needs to be in the range 0x01000000 (decimal
 16777216) to 0xFFFFFFFF (decimal 4294967295) inclusive.
