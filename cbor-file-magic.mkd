@@ -288,6 +288,45 @@ Should this file be reviewed by a human (directly in an
 editor, or in a hexdump display), it will include the ASCII characters "CBOR" prominently.
 This value is also included simply because the inner nested tag needs to tag something.
 
+
+### Example {#tag-seq-example}
+
+To construct an example without registering a new tag, we use the
+technique described in {{ct-tags}} to translate the Content-Format
+number registered in {{-new-block}} for `application/missing-blocks+cbor-seq` (as per Registry {{content-formats (Content-Formats)<IANA.core-parameters}} of {{IANA.core-parameters}}), the number 272, into the tag 1668546560+272 = 1668546832.
+<!-- (+ 1668546560 272)1668546832 -->
+
+This is a somewhat contrived example, as this is not a media type that
+is likely to be committed to storage.
+Nonetheless, with this tag, missing blocks list `0, 8, 15` would be
+enveloped as (in diagnostic notation):
+
+~~~ cbor-diag
+55800(1668546832('BOR')),
+0,
+8,
+15
+~~~
+
+Or in hex:
+
+~~~~ cbor-pretty
+# CBOR sequence with 4 elements
+d9 d9f8         # tag(55800)
+   da 63740110  # tag(1668546832)
+      43        # bytes(3)
+         424f52 # "BOR"
+00 # unsigned(0)
+08 # unsigned(8)
+0f # unsigned(15)
+~~~~
+
+At the representation level, the unique fingerprint for
+`application/missing-blocks+cbor-seq` is composed of the 8 bytes
+d9d9f8da63740110 hex, after which the unadorned CBOR sequence
+(00... for the missing block list given) is appended.
+
+
 # Advice to Protocol Designer
 
 This document introduces a choice between wrapping a single CBOR data item into a (pair of) identifying CBOR tags, or prepending an identifying encoded CBOR data item (which in turn contains a pair of identifying CBOR tags) to a CBOR Sequence (which might be single data item).
@@ -558,7 +597,7 @@ In order to reduce the problems due to serialization, the serialization is being
 Additionally, this change allows the IPC to be described by CDDL, and for any language that encode to CBOR can be used.
 
 IANA has allocated the tag 1330664270, or 0x4f\_50\_53\_4e for this purpose.
-As a result, each file and each IPC is prefixed with a CBOR TAG Sequence.
+As a result, each file and each IPC is prefixed with a CBOR Tag Sequence.
 
 In diagnostic notation:
 
@@ -569,10 +608,10 @@ In diagnostic notation:
 Or in hex:
 
 ~~~~ cbor-pretty
-D9 D9F8         # tag(55800)
-   DA 4F50534E  # tag(1330664270)
+d9 d9f8         # tag(55800)
+   da 4f50534e  # tag(1330664270)
       43        # bytes(3)
-         424F52 # "BOR"
+         424f52 # "BOR"
 ~~~~
 
 # Using CBOR Labels for non-CBOR data {#headers}
