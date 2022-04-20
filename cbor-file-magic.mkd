@@ -182,7 +182,7 @@ semantics. [^XXXX]
     XXXX" with the RFC number of the present specification and remove
     this note.)
 
-Allocation of the CBOR tag needs to be initiated by the author of the CBOR
+Allocation of the CBOR tag needs to be initiated by the designer of the CBOR
 Protocol, who can provide a proposed tag number.
 In order to be in the four-byte range, and so that there are no
 leading zero bytes, the value needs to be in the range 0x01000000 (decimal
