@@ -213,8 +213,11 @@ described in {{Section 3.4.6 of STD94}}.
 
 The tag content of that tag is a second CBOR Tag that has been allocated to describe the specific Protocol involved, as described above.
 
-This method wraps the CBOR value as tags usually do.
-Applications that need to send the CBOR value across a constrained link may wish to remove the two tags if the use is implicitly understood.
+This method wraps the CBOR data item as CBOR tags usually do.
+Applications that need to send the stored CBOR data item across a
+constrained network may wish to remove the two tags if their type is
+understood from the protocol context, e.g., from a CoAP Content-Format
+Option ({{Section 5.10.3 of RFC7252}}).
 
 A CBOR Protocol specification may specify the use of two tags only for
 specific cases.  For instance, it might use them when storing the
@@ -340,7 +343,7 @@ If the programs that read the contents of the file already expect to process all
 The program involved may throw errors or warnings on the Labeled CBOR Sequence if they have not yet been updated, but this may not be a problem.
 
 There are situations where multiple objects may be concatenated into a single file.
-If each object is preceded by a  Labeled CBOR Sequence label then there may be
+If each object is preceded by a Labeled CBOR Sequence label then there may be
 multiple such labels in the file.
 <!-- ???If it is, then consideration should be given to CBOR Tag Wrapped instead.??? -->
 
@@ -365,15 +368,29 @@ If only one item is ever expected in the file, the use of Labeled CBOR Sequence 
 
 ## Are there tags at the start?
 
-If the Protocol expects to use other tags values at the top-level, then the use
-of the tag wrapped format may be easier to explain in the protocol description.
+If the Protocol expects to use other tags at its top-level, then the
+use of the CBOR Tag Wrapped format may be easy to explain at the same
+place in the protocol description.
 
 # Security Considerations
 
 This document provides a way to identify CBOR Protocol objects.
 Clearly identifying CBOR contents in files may have a variety of impacts.
 
-The most obvious is that it may allow malware to identify interesting stored objects, and then exfiltrate or corrupt them.
+The most obvious is that it may allow malware to identify interesting
+stored objects, and then exfiltrate or corrupt them.
+
+Protective applications (that check data) cannot rely on the
+applications they try to protect (that use the data) to make
+exactly the same decisions in recognizing file formats.
+(This is an instance of a check vs. use issue.)
+For example, end-point assessment technologies should not solely rely
+on the labeling approaches described in this document to decide
+whether to inspect a given file.
+Similarly, depending on operating systems configurations and related
+properties of the execution environment the labeling might influence
+the default application used to process a file in a way that may not
+be predicted by a protective application.
 
 # IANA Considerations
 
