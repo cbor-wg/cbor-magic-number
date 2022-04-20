@@ -43,6 +43,7 @@ informative:
     date: 2021-01-20
   RFC8610:
   RFC7252: coap
+  RFC20: ascii
   IANA.core-parameters:
   IANA.cbor-tags:
   RFC8017: pkcs1
@@ -167,7 +168,7 @@ While the Unix file(1) command can be told to ignore certain bytes, this can lea
 This Section presents two enveloping methods.  Which one is to be used is up to the CBOR Protocol designer to determine.
 Both use CBOR Tags in a way that results in a deterministic first 8 to 12 bytes.
 
-## The CBOR Protocol Specific Tag
+## The CBOR Protocol Specific Tag {#spectag}
 
 In both enveloping methods,
 CBOR Protocol designers need to obtain a CBOR tag for each kind of object that they might store in files.
@@ -191,9 +192,11 @@ It is further suggested to avoid values that have an embedded zero byte in
 the four bytes of their binary representation (such as 0x12003456), as
 these may confuse implementations that treat the magic number as a C string.
 
-The use of a sequence of four US-ASCII codes which are mnemonic to the
+The use of a sequence of four US-ASCII {{-ascii}} codes which are mnemonic to the
 protocol is encouraged, but not required (there may be reasons to
 encode other information into the tag; see {{ct-tags}} for an example).
+For instance, {{openswan}} uses "OPSN" which translates to the tag
+number 1330664270 registered for it.
 
 For CBOR data items that form a representation that is
 described by a CoAP Content-Format Number ({{Section 12.3 of -coap}},
@@ -211,7 +214,10 @@ This data item is enveloped into two nested tags:
 The outer tag is a Self-described CBOR tag, 55799, as
 described in {{Section 3.4.6 of STD94}}.
 
-The tag content of that tag is a second CBOR Tag that has been allocated to describe the specific Protocol involved, as described above.
+The tag content of the outer tag is a second CBOR tag whose tag number has
+been allocated to describe the specific Protocol involved, as
+discussed in {{spectag}}.
+The tag content of this inner tag is the single CBOR data item.
 
 This method wraps the CBOR data item as CBOR tags usually do.
 Applications that need to send the stored CBOR data item across a
