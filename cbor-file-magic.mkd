@@ -47,6 +47,7 @@ informative:
   IANA.cbor-tags:
   RFC8017: pkcs1
   RFC9177: new-block
+  RFC6838: mediareg
   X.690:
     title: 'Information technology - ASN.1 encoding rules: Specification of Basic
       Encoding Rules (BER), Canonical Encoding Rules (CER) and Distinguished Encoding
@@ -57,6 +58,14 @@ informative:
     seriesinfo:
       ITU-T Recommendation: X.690
       ISO/IEC: 8825-1
+  MAGIC:
+    title: "archive (library) file format"
+    target: https://www.bell-labs.com/usr/dmr/www/man51.pdf#page=4
+    date: 1971-11-03
+    author:
+    - name: Dennis Ritchie
+    rc: >
+      in Bell Labs, Unix Programmer's Manual, First Edition: File Formats
 
 venue:
   mail: cbor@ietf.org
@@ -72,9 +81,7 @@ is friendly to common file type recognition systems such as the Unix file(1) com
 # Introduction
 
 Since very early in computing, operating systems have sought ways to mark which files could be processed by which programs.
-In Unix, everything is a stream of bytes (related to the TCP/IP
-socket model, where all network connectivity also is a stream of
-bytes); identifying the contents of a stream of bytes became a heuristic activity.
+In Unix, everything is a stream of bytes; identifying the contents of a stream of bytes became a heuristic activity.
 
 For instance, the Unix file(1) command, which has existed since 1973 {{file}}, has for decades been able to identify many file formats based upon the contents of the file.
 
@@ -91,7 +98,9 @@ Having a media type associated with the file contents can avoid some
 of the brittleness of this approach.
 When files become disconnected from their type information, such as when attempting to do forensics on a damaged system, then being able to identify the type of information that is stored in file can become very important.
 
-It is noted that in the media type registration template, a magic number is asked for, if available, as is a file extension.
+A common way to identify the type of a file from its contents is to
+place a "magic number" at the start of the file contents {{MAGIC}}.
+It is noted that in the media type registration template {{-mediareg}}, a magic number is asked for, if available, as is a file extension.
 
 A challenge for the file(1) command is often that it can be confused by the encoding vs. the content.
 For instance, an Android "apk" (as used to transfer and store an application) may be identified as a ZIP file.
@@ -147,7 +156,7 @@ language defined in {{RFC8610}}.
 
 ## Requirements for a Magic Number
 
-A magic number is ideally a fingerprint that is unique to a CBOR protocol, present in the first few (small multiple of 4) bytes of the file,
+A magic number is ideally a fingerprint that is unique to a specific CBOR protocol, present in the first few (small multiple of 4) bytes of the file,
 which does not change when the contents change, and does not depend upon the length of the file.
 
 Less ideal solutions have a pattern that needs to be matched, but in which some bytes need to be ignored.
@@ -256,7 +265,7 @@ The total length of the label is 12 bytes.
 2. The inner tag is a CBOR tag, from the First Come First Served space, that uniquely identifies the CBOR Protocol.
 As with CBOR Tag Wrapped, the use of a four-byte tag is encouraged that encodes without zero bytes.
 3. The tag content is a three byte CBOR byte string containing
-   0x42\_4F\_52 ('BOR' in diagnostic notation).
+   0x42\_4f\_52 ('BOR' in diagnostic notation).
 
 The outer tag in the label identifies the file as being a CBOR Sequence, and does so with all
 the desirable properties explained in {{Section 3.4.6 of STD94}}.
@@ -284,7 +293,7 @@ Which should a protocol designer use?
 
 In this discussion, one assumes that there is an object stored in a file, perhaps specified by a system operator in a configuration file.
 
-For example: a private key used in COSE operations, a public key/certificate in C509 ({{?I-D.ietf-cose-cbor-encoded-cert}}) or CBOR format, a recorded sensor reading stored for later transmission, or a COVID vaccination certificate that needs to be displayed in QR code form.
+For example: a private key used in COSE operations, a public key/certificate in C509 ({{?I-D.ietf-cose-cbor-encoded-cert}}) or CBOR format, a recorded sensor reading stored for later transmission, or a COVID-19 vaccination certificate that needs to be displayed in QR code form.
 
 Both the Labeled CBOR Sequence and the wrapped tag can be trivially removed by an application before sending the CBOR content out on the wire.
 
@@ -432,7 +441,7 @@ Semantics:
 
 IANA is requested to allocate the
 tag numbers 1668546560 (0x63740000) to
-1668612095 (0x6374FFFF) as follows:
+1668612095 (0x6374ffff) as follows:
 
 {: newline="true"}
 Data Item:
