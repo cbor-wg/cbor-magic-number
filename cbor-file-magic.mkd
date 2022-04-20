@@ -64,8 +64,8 @@ venue:
 
 --- abstract
 
-This document defines an on-disk format for CBOR data items that
-is friendly to common on-disk recognition systems such as the Unix file(1) command.
+This document defines an stored ("file") format for CBOR data items that
+is friendly to common file type recognition systems such as the Unix file(1) command.
 
 --- middle
 
@@ -86,7 +86,7 @@ Many common web servers derive the media-type information from file extensions.
 
 Having a media type associated with the file is a better solution in
 general.
-When files become disconnected from their type information, such as when attempting to do forensics on a damaged system, then being able to identify a file type can become very important.
+When files become disconnected from their type information, such as when attempting to do forensics on a damaged system, then being able to identify the type of information that is stored in file can become very important.
 
 It is noted that in the media type registration template, a magic number is asked for, if available, as is a file extension.
 
@@ -102,7 +102,7 @@ two possible methods of enveloping data are presented: a CBOR Protocol designer 
 (A CBOR Protocol is a specification which uses CBOR as its encoding.)
 
 A third method is also proposed by which this CBOR format prepended tag is used to identify non-CBOR files.
-This third method has been placed in an appendix because it is not
+This third method has been placed in {{headers}} because it is not
 about identifying media types containing CBOR-encoded data items.
 
 This document also gives advice to designers of CBOR protocols on
@@ -120,7 +120,7 @@ ASN.1 based systems where most files are PEM encoded; these are then all identif
 
 While the envelopes defined in this specification add information to how data conforming to CBOR Protocols are stored in files, there is no requirement that either type of envelope be transferred on the wire.
 
-In addition to the on-disk identification aspects, there are some protocols which may benefit from having such a magic number on the wire if they are presently using a different (legacy) encoding scheme.
+In addition to the aspects around identification of data items stored in files or similar units of storage, there are some protocols which may benefit from having such a magic number on the wire if they are presently using a different (legacy) encoding scheme.
 The presence of the identifiable magic sequence signals that CBOR is
 being used as opposed to a legacy scheme.
 
@@ -132,6 +132,12 @@ retroactively add a magic number to content-formats as defined by
 
 Byte is a synonym for octet.
 The term "byte string" refers to the data item defined in {{STD94}}.
+
+The term "file" is understood to stand in a general way for a stored
+representation that is somewhat detached from the original context of
+usage of that representation; its usage in this document encompasses
+similar units of storage that may have different identification
+schemes such as partitions or media blocks.
 
 The term "diagnostic notation" refers to the human-readable notation
 for CBOR data items defined in {{Section 8 of STD94}} and {{Section G of RFC8610}}.
@@ -155,7 +161,7 @@ Both use CBOR Tags in a way that results in a deterministic first 8 to 12 bytes.
 ## The CBOR Protocol Specific Tag
 
 In both enveloping methods,
-CBOR Protocol designers need to obtain a CBOR tag for each kind of object that they might store on disk.
+CBOR Protocol designers need to obtain a CBOR tag for each kind of object that they might store in files.
 As there are more than 4 billion available 4-byte tags, there should be little issue in allocating a few to each available CBOR Protocol.
 
 The IANA policy for 4-byte CBOR Tags is First Come First Served, so all that is required is an email to IANA, having filled in the small template provided in {{Section 9.2 of STD94}}.
@@ -293,9 +299,9 @@ As an example of where there was a problem with previous security systems, "PEM"
 The PKCS1 format {{-pkcs1}} could also contain a private key object followed by a one or more certificate objects: but only when in PEM format.
 Annoyingly, when in binary DER format ({{X.690}}, which like CBOR is self-delimiting), concatenation of certificates was not compatible with most programs as they did not expect to read more than one item in the file.
 
-The use of CBOR Tag Wrapped format is easier to retrofit to an existing format with existing and unchangeable on-disk format for a single CBOR data item.
+The use of CBOR Tag Wrapped format is easier to retrofit to an existing format with existing and unchangeable stored format for a single CBOR data item.
 This new sequence of tags is expected to be trivially ignored by many
-existing programs when reading CBOR from disk, even if the program only
+existing programs when reading CBOR from files or similar units of storage, even if the program only
 supports decoding a single data item (and not a CBOR sequence).
 But, a naive program might also then transmit the additional tags across the network.
 Removing the CBOR Tag Wrapped format requires knowledge of the two tags involved.
@@ -313,9 +319,9 @@ Here are some considerations in the form of survey questions:
 ## Is the on-wire format new?
 
 If the on-wire format is new, then it could be specified with the CBOR Tag Wrapped format if the extra eight bytes are not a problem.
-The disk format is then identical to the on-wire format.
+The stored format is then identical to the on-wire format.
 
-If the eight bytes are a problem on the wire (and they often are if CBOR is being considered), then the Labeled CBOR Sequence format should be adopted for on-disk storage.
+If the eight bytes are a problem on the wire (and they often are if CBOR is being considered), then the Labeled CBOR Sequence format should be adopted for the stored format.
 
 ## Can many items be trivially concatenated?
 
@@ -355,9 +361,9 @@ of the tag wrapped format may be easier to explain in the protocol description.
 # Security Considerations
 
 This document provides a way to identify CBOR Protocol objects.
-Clearly identifying CBOR contents on disk may have a variety of impacts.
+Clearly identifying CBOR contents in files may have a variety of impacts.
 
-The most obvious is that it may allow malware to identify interesting objects on disk, and then exfiltrate or corrupt them.
+The most obvious is that it may allow malware to identify interesting stored objects, and then exfiltrate or corrupt them.
 
 # IANA Considerations
 
@@ -449,7 +455,7 @@ which is a short 16-bit unsigned integer that identifies a specific
 content type (media type plus optionally parameters), optionally
 together with a content encoding.
 
-Outside of a transfer protocol that indicates the Content-Format for a representation, it may be necessary to identify the Content-Format of the representation when it is on disk, in firmware, or when debugging.
+Outside of a transfer protocol that indicates the Content-Format for a representation, it may be necessary to identify the Content-Format of the representation when it is stored in a file, in firmware, or when debugging.
 
 This specification allocates CBOR tag numbers 1668546560 (0x63740000) to
 1668612095 (0x6374FFFF) for the tagging of representations of specific
