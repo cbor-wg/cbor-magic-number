@@ -164,7 +164,7 @@ In both enveloping methods,
 CBOR Protocol designers need to obtain a CBOR tag for each kind of object that they might store in files.
 As there are more than 4 billion available 4-byte tags, there should be little issue in allocating a few to each available CBOR Protocol.
 
-The IANA policy for 4-byte CBOR Tags is First Come First Served, so all that is required is an email to IANA, having filled in the small template provided in {{Section 9.2 of STD94}}.
+The IANA policy for 4-byte CBOR Tags is First Come First Served, so all that is required is a simple interaction (e.g., via web or email) with IANA, having filled in the small template provided in {{Section 9.2 of STD94}}.
 In the template, it is suggested to include a reference to this
 specification (RFC XXXX) alongside the Description of
 semantics. [^XXXX]
@@ -177,13 +177,15 @@ semantics. [^XXXX]
 
 This tag needs to be allocated by the author of the CBOR Protocol.
 In order to be in the four-byte range, and so that there are no
-leading zeros, the value needs to be in the range 0x01000000 (decimal
-16777216) to 0xFFFFFFFF (decimal 4294967295).
+leading zero bytes, the value needs to be in the range 0x01000000 (decimal
+16777216) to 0xFFFFFFFF (decimal 4294967295) inclusive.
 It is further suggested to avoid values that have an embedded zero byte in
 the four bytes of their binary representation (such as 0x12003456), as
 these may confuse implementations that treat the magic number as a C string.
 
-The use of a sequence of four US-ASCII codes which are mnemonic to the protocol is encouraged, but not required.
+The use of a sequence of four US-ASCII codes which are mnemonic to the
+protocol is encouraged, but not required (there may be reasons to
+encode other information into the tag; see {{ct-tags}} for an example).
 
 For CBOR data items that form a representation that is
 described by a CoAP Content-Format Number ({{Section 12.3 of -coap}},
@@ -520,11 +522,11 @@ The Openswan IPsec project has a daemon ("pluto"), and two control programs ("ad
 They communicate via a Unix-domain socket, over which a C-structure containing pointers to strings is serialized using a bespoke mechanism.
 This is normally not a problem as the structure is compiled by the same compiler; but when there are upgrades it is possible for the daemon and the control programs to get out of sync by the bespoke serialization.
 As a result, there are extra compensations to deal with shutting the daemon down.
-During testing it is sometimes the case that upgrades are backed out.
+During testing, it is sometimes the case that upgrades are backed out.
 
 In addition, when doing unit testing, the easiest way to load policy is to use the
 normal policy reading process, but that is not normally loaded in the daemon.
-Instead the IPC that is normally sent across the wire is compiled/serialized and placed in a file.
+Instead, the IPC that is normally sent across the wire is compiled/serialized and placed in a file.
 The above magic number is included in the file, and also on the IPC in order to distinguish the "shutdown" command CBOR operation.
 
 In order to reduce the problems due to serialization, the serialization is being changed to CBOR.
