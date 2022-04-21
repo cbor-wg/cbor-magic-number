@@ -165,8 +165,14 @@ While the Unix file(1) command can be told to ignore certain bytes, this can lea
 
 # Protocol
 
-This Section presents two enveloping methods.  Which one is to be used is up to the CBOR Protocol designer to determine.
+This Section presents two enveloping methods.
 Both use CBOR Tags in a way that results in a deterministic first 8 to 12 bytes.
+Which one is to be used
+is up to the CBOR Protocol designer to determine; see {{advice}} for
+some guidance.[^appendix]
+
+[^appendix]: We are preparing a move of Section 3 "Advice..." to the Appendix;
+    this is going to be the necessary reference.
 
 ## The CBOR Protocol Specific Tag {#spectag}
 
@@ -186,7 +192,8 @@ semantics. [^XXXX]
 Allocation of the CBOR tag needs to be initiated by the designer of the CBOR
 Protocol, who can provide a proposed tag number.
 In order to be in the four-byte range, and so that there are no
-leading zero bytes, the value needs to be in the range 0x01000000 (decimal
+leading zero bytes in the four-byte encoding of the tag number, the
+value needs to be in the range 0x01000000 (decimal
 16777216) to 0xFFFFFFFF (decimal 4294967295) inclusive.
 It is further suggested to avoid values that have an embedded zero byte in
 the four bytes of their binary representation (such as 0x12003456), as
@@ -221,14 +228,14 @@ The tag content of this inner tag is the single CBOR data item.
 
 This method wraps the CBOR data item as CBOR tags usually do.
 Applications that need to send the stored CBOR data item across a
-constrained network may wish to remove the two tags if their type is
+constrained network may wish to remove the two tags if the type is
 understood from the protocol context, e.g., from a CoAP Content-Format
 Option ({{Section 5.10.3 of RFC7252}}).
-
-A CBOR Protocol specification may specify the use of two tags only for
-specific cases.  For instance, it might use them when storing the
-representation in a local file or for Web access, but not when using them
-in protocol messages that already provide the necessary context.
+A CBOR Protocol specification may therefore pick the specific cases
+where the CBOR Tag Wrapped enveloping method is to be used.
+For instance, it might specify its use for storing the representation
+in a local file or for Web access, but not within protocol messages that
+already provide the necessary context.
 
 ### Example {#tag-wrap-example}
 
@@ -333,7 +340,7 @@ d9d9f8da63740110 hex, after which the unadorned CBOR sequence
 (00... for the missing block list given) is appended.
 
 
-# Advice to Protocol Designer
+# Advice to Protocol Designer {#advice}
 
 This document introduces a choice between wrapping a single CBOR data item into a (pair of) identifying CBOR tags, or prepending an identifying encoded CBOR data item (which in turn contains a pair of identifying CBOR tags) to a CBOR Sequence (which might be single data item).
 
