@@ -55,6 +55,7 @@ informative:
   IANA.core-parameters:
   IANA.cbor-tags:
   RFC8017: pkcs1
+  RFC8428: senml
   RFC9177: new-block
   RFC6838: mediareg
   X.690:
@@ -249,7 +250,14 @@ already provide the necessary context.
 
 ### Example {#tag-wrap-example}
 
-To construct an example without registering a new tag, we use the technique described in {{ct-tags}} to translate the Content-Format number registered for `application/senml+cbor` (as per Registry {{content-formats (Content-Formats)<IANA.core-parameters}} of {{IANA.core-parameters}}), the number 112, into the tag TN(112) = 1668546929.
+To construct an example without registering a new tag, we use the
+Content-Format number registered in {{-senml}} for
+`application/senml+cbor` (as per Registry {{content-formats
+(Content-Formats)<IANA.core-parameters}} of {{IANA.core-parameters}}),
+the number 112.
+
+Using the technique described in {{ct-tags}}, this translates into the
+tag TN(112) = 1668546929.
 
 With this tag, the SenML-CBOR pack `[{0: "current", 6: 3, 2: 1.5}]` would be enveloped as (in diagnostic notation):
 
@@ -315,11 +323,13 @@ This value is also included simply because the inner nested tag needs to tag som
 ### Example {#tag-seq-example}
 
 To construct an example without registering a new tag, we use the
-technique described in {{ct-tags}} to translate the Content-Format
-number registered in {{-new-block}} for
+Content-Format number registered in {{-new-block}} for
 `application/missing-blocks+cbor-seq` (as per Registry
 {{content-formats (Content-Formats)<IANA.core-parameters}} of
-{{IANA.core-parameters}}), the number 272, into the tag TN(272) = 1668547090.
+{{IANA.core-parameters}}), the number 272.
+
+Using the technique described in {{ct-tags}}, this translates into the
+tag TN(272) = 1668547090.
 
 This is a somewhat contrived example, as this is not a media type that
 is likely to be committed to storage.
