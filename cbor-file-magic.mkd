@@ -33,6 +33,14 @@ normative:
     =: RFC8949
     display: STD94
   RFC8742: seq
+  C:
+    title: Information technology — Programming languages — C
+    author:
+      org: International Organization for Standardization
+    date: 2018-06
+    target: https://www.iso.org/standard/74528.html
+    seriesinfo:
+      ISO/IEC: 9899:2018, Fourth Edition
 
 informative:
   file:
@@ -155,6 +163,8 @@ for CBOR data items defined in {{Section 8 of STD94}} and {{Section G of RFC8610
 The term CDDL (Concise Data Definition Language) refers to the
 language defined in {{RFC8610}}.
 
+The function TN(ct) is defined in {{ct-tags}}.
+
 ## Requirements for a Magic Number
 
 A magic number is ideally a fingerprint that is unique to a specific CBOR protocol, present in the first few (small multiple of 4) bytes of the file,
@@ -239,19 +249,19 @@ already provide the necessary context.
 
 ### Example {#tag-wrap-example}
 
-To construct an example without registering a new tag, we use the technique described in {{ct-tags}} to translate the Content-Format number registered for `application/senml+cbor` (as per Registry {{content-formats (Content-Formats)<IANA.core-parameters}} of {{IANA.core-parameters}}), the number 112, into the tag 1668546560+112 = 1668546672.
+To construct an example without registering a new tag, we use the technique described in {{ct-tags}} to translate the Content-Format number registered for `application/senml+cbor` (as per Registry {{content-formats (Content-Formats)<IANA.core-parameters}} of {{IANA.core-parameters}}), the number 112, into the tag TN(112) = 1668546929.
 
 With this tag, the SenML-CBOR pack `[{0: "current", 6: 3, 2: 1.5}]` would be enveloped as (in diagnostic notation):
 
 ~~~ cbor-diag
-55799(1668546672([{0: "current", 6: 3, 2: 1.5}]))
+55799(1668546929([{0: "current", 6: 3, 2: 1.5}]))
 ~~~
 
 Or in hex:
 
 ~~~~ cbor-pretty
 d9 d9f7                       # tag(55799)
-   da 63740070                # tag(1668546672)
+   da 63740171                # tag(1668546929)
       81                      # array(1)
          a3                   # map(3)
             00                # unsigned(0)
@@ -263,7 +273,7 @@ d9 d9f7                       # tag(55799)
             f9 3e00           # primitive(15872)
 ~~~~
 
-At the representation level, the unique fingerprint for `application/senml+cbor` is composed of the 8 bytes d9d9f7da63740070 hex, after which the unadorned CBOR data (81... for the SenML data) is appended.
+At the representation level, the unique fingerprint for `application/senml+cbor` is composed of the 8 bytes d9d9f7da63740171 hex, after which the unadorned CBOR data (81... for the SenML data) is appended.
 
 ## Enveloping Method: Labeled CBOR Sequence {#sequences}
 
@@ -306,8 +316,10 @@ This value is also included simply because the inner nested tag needs to tag som
 
 To construct an example without registering a new tag, we use the
 technique described in {{ct-tags}} to translate the Content-Format
-number registered in {{-new-block}} for `application/missing-blocks+cbor-seq` (as per Registry {{content-formats (Content-Formats)<IANA.core-parameters}} of {{IANA.core-parameters}}), the number 272, into the tag 1668546560+272 = 1668546832.
-<!-- (+ 1668546560 272)1668546832 -->
+number registered in {{-new-block}} for
+`application/missing-blocks+cbor-seq` (as per Registry
+{{content-formats (Content-Formats)<IANA.core-parameters}} of
+{{IANA.core-parameters}}), the number 272, into the tag TN(272) = 1668547090.
 
 This is a somewhat contrived example, as this is not a media type that
 is likely to be committed to storage.
@@ -315,7 +327,7 @@ Nonetheless, with this tag, missing blocks list `0, 8, 15` would be
 enveloped as (in diagnostic notation):
 
 ~~~ cbor-diag
-55800(1668546832('BOR')),
+55800(1668547090('BOR')),
 0,
 8,
 15
@@ -326,7 +338,7 @@ Or in hex:
 ~~~~ cbor-pretty
 # CBOR sequence with 4 elements
 d9 d9f8         # tag(55800)
-   da 63740110  # tag(1668546832)
+   da 63740212  # tag(1668547090)
       43        # bytes(3)
          424f52 # "BOR"
 00 # unsigned(0)
@@ -336,7 +348,7 @@ d9 d9f8         # tag(55800)
 
 At the representation level, the unique fingerprint for
 `application/missing-blocks+cbor-seq` is composed of the 8 bytes
-d9d9f8da63740110 hex, after which the unadorned CBOR sequence
+d9d9f8da63740212 hex, after which the unadorned CBOR sequence
 (00... for the missing block list given) is appended.
 
 
@@ -509,7 +521,7 @@ Semantics:
 ## CBOR Tags for CoAP Content-Format Numbers {#iana-ct-tags}
 
 IANA is requested to allocate the
-tag numbers 1668546560 (0x63740000) to
+tag numbers 1668546817 (0x63740101) to
 1668612095 (0x6374ffff) as follows:
 
 {: newline="true"}
@@ -518,7 +530,8 @@ Data Item:
 <!-- Er, hmm. -->
 
 Semantics:
-: for each tag number NNNNNNNN, the representation of content-format NNNNNNNN-1668546560
+: the representation of content-format ct < 65025 is indicated by
+  tag number TN(ct) = 0x63470101 + (ct / 255) * 256 + ct % 255
 
 Reference:
 : RFCthis
@@ -536,12 +549,32 @@ together with a content encoding.
 
 Outside of a transfer protocol that indicates the Content-Format for a representation, it may be necessary to identify the Content-Format of the representation when it is stored in a file, in firmware, or when debugging.
 
-This specification allocates CBOR tag numbers 1668546560 (0x63740000) to
+This specification allocates CBOR tag numbers 1668546817 (0x63740101) to
 1668612095 (0x6374FFFF) for the tagging of representations of specific
 content formats.
-The tag content tagged with tag number NNNNNNNN (in above range) is a byte
-string that is to be interpreted as a representation of the content
-format NNNNNNNN-1668546560.
+
+Using tags from this range, a byte string that is to be interpreted as
+a representation of Content-Format number `ct`, with ct < 65025
+(255*255), can be identified by enclosing it in a tag with tag number
+`TN(ct)` where:
+
+> TN(ct) = 0x63470101 + (ct / 255) * 256 + ct % 255.
+
+(where `+`, `*`, `/` and `%` stand for integer addition,
+multiplication, division and remainder as in the programming language
+C {{C}}.)
+
+{:aside}
+> This formula avoids the use of zero bytes in the representation of
+the tag number.
+>
+> Note that no tag numbers are assigned for Content-Format numbers in
+the range 65025 {{{≤}}} ct {{{≤}}} 65535.
+(This range is in the range reserved by {{Section 12.3 of -coap}} for
+experimental use.
+The overlap of 25 code points between this experimental range with the
+range this appendix defines tag numbers for can be used for
+experiments that want to employ a tag number.)
 
 Exceptionally, when used immediately as tag content of one of the tags
 55799, 55800, or 55801, the tag content is as follows:
@@ -567,13 +600,13 @@ Registry {{content-formats (Content-Formats)<IANA.core-parameters}} of {{IANA.co
 
 * As discussed in {{tag-wrap-example}}, Content-Format 112 stands for
   media type application/senml+cbor (no parameters).
-  The corresponding tag number is 1668546672 (i.e., 1668546560+112).
+  The corresponding tag number is TN(112) = 1668546929.
 
   So the following CDDL snippet can be used to identify
   application/senml+cbor representations:
 
   ~~~~ cddl
-  senml-cbor = #6.1668546672(bstr)
+  senml-cbor = #6.1668546929(bstr)
   ~~~~
 
   Note that a byte string is used as the type of the tag content, because a
@@ -583,14 +616,14 @@ Registry {{content-formats (Content-Formats)<IANA.core-parameters}} of {{IANA.co
   application/missing-blocks+cbor-seq, a CBOR sequence
   {{-new-block}}.
 
-  The corresponding tag number is 1668546832 (i.e., 1668546560+272).
+  The corresponding tag number is TN(272) = 1668547090.
 
   So the following CDDL snippet can be used to identify
   application/missing-blocks+cbor-seq representations as embedded in a
   CBOR byte string:
 
   ~~~~ cddl
-  missing-blocks = #6.1668546832(bstr)
+  missing-blocks = #6.1668547090(bstr)
   ~~~~
 
 # Example from Openswan {#openswan}
@@ -673,23 +706,23 @@ Registry {{content-formats (Content-Formats)<IANA.core-parameters}} of {{IANA.co
 
 * Content-Format 432 stands for media type application/td+json (no
   parameters).
-  The corresponding tag number is 1668546992 (i.e., 1668546560+432).
+  The corresponding tag number is TN(432) = 1668547250.
 
   So the following CDDL snippet can be used to identify a CBOR-Labeled non-CBOR data  for application/td+json representations:
 
   ~~~~ cddl
-  td-json-header = #6.55801(#6.1668546992('BOR'))
+  td-json-header = #6.55801(#6.1668547250('BOR'))
   ~~~~
 
 * Content-Format 11050 stands for media type application/json in
   deflate content-coding.
 
-  The corresponding tag number is 1668557610 (i.e., 1668546560+11050).
+  The corresponding tag number is TN(11050) = 1668557910.
 
   So the following CDDL snippet can be used to identify a CBOR-Labeled non-CBOR data  for application/json representations compressed in deflate content-coding:
 
   ~~~~ cddl
-  json-deflate-header = #6.55801(#6.1668557610('BOR'))
+  json-deflate-header = #6.55801(#6.1668557910('BOR'))
   ~~~~
 
 
