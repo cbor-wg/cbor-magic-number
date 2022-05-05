@@ -735,8 +735,6 @@ Registry {{content-formats (Content-Formats)<IANA.core-parameters}} of {{IANA.co
   ~~~~
 
 
-# Changelog
-
 # Acknowledgements
 {: numbered="false"}
 
