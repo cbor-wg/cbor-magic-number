@@ -539,7 +539,8 @@ Data Item:
 
 Semantics:
 : the representation of content-format ct < 65025 is indicated by
-  tag number TN(ct) = 0x63470101 + (ct / 255) * 256 + ct % 255
+  tag number \\
+  TN(ct) = 0x63470101 + (ct / 255) * 256 + ct % 255
 
 Reference:
 : RFC XXXX
