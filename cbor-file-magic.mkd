@@ -180,10 +180,7 @@ This Section presents two enveloping methods.
 Both use CBOR Tags in a way that results in a deterministic first 8 to 12 bytes.
 Which one is to be used
 is up to the CBOR Protocol designer to determine; see {{advice}} for
-some guidance.[^appendix]
-
-[^appendix]: We are preparing a move of Section 3 "Advice..." to the Appendix;
-    this is going to be the necessary reference.
+some guidance.
 
 ## The CBOR Protocol Specific Tag {#spectag}
 
@@ -361,6 +358,7 @@ At the representation level, the unique fingerprint for
 d9d9f8da63740212 hex, after which the unadorned CBOR sequence
 (00... for the missing block list given) is appended.
 
+--- back
 
 # Advice to Protocol Designer {#advice}
 
@@ -444,6 +442,8 @@ If only one item is ever expected in the file, the use of Labeled CBOR Sequence 
 If the Protocol expects to use other tags at its top-level, then the
 use of the CBOR Tag Wrapped format may be easy to explain at the same
 place in the protocol description.
+
+--- middle
 
 # Security Considerations
 
