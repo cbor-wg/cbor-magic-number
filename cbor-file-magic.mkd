@@ -705,7 +705,7 @@ CBOR representation of the header.
 This allows the application to trivially remove the header item with
 the two nested tags and the byte string.
 
-As with the Labeled CBOR Sequence {#sequences}, this choice of the tag
+As with the Labeled CBOR Sequence {{sequences}}, this choice of the tag
 content places the ASCII characters "CBOR" prominently into the
 header.
 
